@@ -61,7 +61,7 @@ qt5_add_dbus_interface(bluezqt_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.b
 qt5_add_dbus_interface(bluezqt_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.bluez.obex.Session1.xml obexsession1)
 qt5_add_dbus_interface(bluezqt_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.bluez.obex.ObjectPush1.xml obexobjectpush1)
 
-add_library(KF5BluezQt ${bluezqt_SRCS})
+add_library(KF5BluezQt STATIC ${bluezqt_SRCS})
 generate_export_header(KF5BluezQt BASE_NAME BluezQt)
 add_library(KF5::BluezQt ALIAS KF5BluezQt)
 
