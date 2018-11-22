@@ -54,16 +54,16 @@ add_definitions(-DQT_USE_QSTRINGBUILDER)
 # Subdirectories
 add_subdirectory(src)
 
-if (BUILD_TESTING)
-    add_subdirectory(tests)
-    if(Qt5Test_FOUND)
-        add_subdirectory(autotests)
-    endif()
-endif()
+#if (BUILD_TESTING)
+#    add_subdirectory(tests)
+#    if(Qt5Test_FOUND)
+#        add_subdirectory(autotests)
+#    endif()
+#endif()
 
-if(Qt5Qml_FOUND)
-    add_subdirectory(src/imports)
-endif()
+#if(Qt5Qml_FOUND)
+#    add_subdirectory(src/imports)
+#endif()
 
 # Create a Config.cmake and a ConfigVersion.cmake file and install them
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5BluezQt")
