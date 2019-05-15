@@ -73,6 +73,7 @@ public:
     QList<DevicePtr> m_devices;
     QString m_modalias;
     MediaPtr m_media;
+    LEAdvertisingManagerPtr m_leAdvertisingManager;
 };
 
 } // namespace BluezQt
