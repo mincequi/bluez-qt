@@ -28,9 +28,9 @@ namespace BluezQt
 LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList& serviceUuids)
     : m_serviceUuids(serviceUuids)
 {
-    QString objectPath = QStringLiteral("/org/bluez/leadvertisements/");
+    QString objectPath = QStringLiteral("/LEAdvertisements/");
     if (!serviceUuids.isEmpty()) {
-        objectPath += serviceUuids.front();
+        objectPath += QString(serviceUuids.front()).replace(QChar::fromLatin1('-'), QChar::fromLatin1('_'));
     }
     m_objectPath.setPath(objectPath);
 }
