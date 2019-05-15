@@ -76,6 +76,7 @@ static MediaPlayer::Status stringToStatus(const QString &status)
 MediaPlayerPrivate::MediaPlayerPrivate(const QString &path, const QVariantMap &properties)
     : QObject()
     , m_dbusProperties(nullptr)
+    , m_path(path)
     , m_equalizer(MediaPlayer::EqualizerOff)
     , m_repeat(MediaPlayer::RepeatOff)
     , m_shuffle(MediaPlayer::ShuffleOff)
@@ -136,7 +137,7 @@ void MediaPlayerPrivate::propertiesChanged(const QString &interface, const QVari
         }
     }
 
-    Q_FOREACH (const QString &property, invalidated) {
+    for (const QString &property : invalidated) {
         if (property == QLatin1String("Name")) {
             PROPERTY_INVALIDATED(m_name, QString(), nameChanged);
         } else if (property == QLatin1String("Equalizer")) {

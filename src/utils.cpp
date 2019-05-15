@@ -199,7 +199,7 @@ QStringList stringListToUpper(const QStringList &list)
 {
     QStringList converted;
     converted.reserve(list.size());
-    Q_FOREACH (const QString &str, list) {
+    for (const QString &str : list) {
         converted.append(str.toUpper());
     }
     return converted;
@@ -296,6 +296,7 @@ Device::Type appearanceToType(quint16 appearance)
         case 0x08:  // Barcode Scanner
             return Device::Peripheral;
         }
+        // fall-through
     default:
         return Device::Uncategorized;
     }

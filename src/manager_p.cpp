@@ -28,7 +28,6 @@
 #include "adapter_p.h"
 #include "debug.h"
 #include "utils.h"
-#include "media.h"
 
 #include <QDBusReply>
 #include <QDBusConnection>
@@ -157,9 +156,6 @@ void ManagerPrivate::getManagedObjectsFinished(QDBusPendingCallWatcher *watcher)
         if (interfaces.contains(Strings::orgBluezProfileManager1())) {
             m_bluezProfileManager = new BluezProfileManager(Strings::orgBluez(), path, DBusConnection::orgBluez(), this);
         }
-        if (interfaces.contains(Strings::orgBluezMedia1())) {
-            m_media = MediaPtr(new Media(path));
-        }
     }
 
     if (!m_bluezAgentManager) {
@@ -169,11 +165,6 @@ void ManagerPrivate::getManagedObjectsFinished(QDBusPendingCallWatcher *watcher)
 
     if (!m_bluezProfileManager) {
         Q_EMIT initError(QStringLiteral("Cannot find org.bluez.ProfileManager1 object!"));
-        return;
-    }
-
-    if (!m_media) {
-        Q_EMIT initError(QStringLiteral("Cannot find org.bluez.Media1 object!"));
         return;
     }
 
@@ -232,7 +223,7 @@ void ManagerPrivate::clear()
 
 AdapterPtr ManagerPrivate::findUsableAdapter() const
 {
-    Q_FOREACH (AdapterPtr adapter, m_adapters) {
+    for (AdapterPtr adapter : qAsConst(m_adapters)) {
         if (adapter->isPowered()) {
             return adapter;
         }
@@ -276,9 +267,16 @@ void ManagerPrivate::interfacesAdded(const QDBusObjectPath &objectPath, const QV
         }
     }
 
-    Q_FOREACH (DevicePtr device, m_devices.values()) {
-        if (path.startsWith(device->ubi())) {
-            device->d->interfacesAdded(path, interfaces);
+    for (auto it = m_adapters.cbegin(); it != m_adapters.cend(); ++it) {
+        if (path.startsWith(it.value()->ubi())) {
+            it.value()->d->interfacesAdded(path, interfaces);
+            break;
+        }
+    }
+
+    for (auto it = m_devices.cbegin(); it != m_devices.cend(); ++it) {
+        if (path.startsWith(it.value()->ubi())) {
+            it.value()->d->interfacesAdded(path, interfaces);
             break;
         }
     }
@@ -288,7 +286,7 @@ void ManagerPrivate::interfacesRemoved(const QDBusObjectPath &objectPath, const 
 {
     const QString &path = objectPath.path();
 
-    Q_FOREACH (const QString &interface, interfaces) {
+    for (const QString &interface : interfaces) {
         if (interface == Strings::orgBluezAdapter1()) {
             removeAdapter(path);
         } else if (interface == Strings::orgBluezDevice1()) {
@@ -296,9 +294,16 @@ void ManagerPrivate::interfacesRemoved(const QDBusObjectPath &objectPath, const 
         }
     }
 
-    Q_FOREACH (DevicePtr device, m_devices.values()) {
-        if (path.startsWith(device->ubi())) {
-            device->d->interfacesRemoved(path, interfaces);
+    for (auto it = m_adapters.cbegin(); it != m_adapters.cend(); ++it) {
+        if (path.startsWith(it.value()->ubi())) {
+            it.value()->d->interfacesRemoved(path, interfaces);
+            break;
+        }
+    }
+
+    for (auto it = m_devices.cbegin(); it != m_devices.cend(); ++it) {
+        if (path.startsWith(it.value()->ubi())) {
+            it.value()->d->interfacesRemoved(path, interfaces);
             break;
         }
     }
@@ -389,7 +394,8 @@ void ManagerPrivate::removeAdapter(const QString &adapterPath)
     }
 
     // Make sure we always remove all devices before removing the adapter
-    Q_FOREACH (const DevicePtr &device, adapter->devices()) {
+    const auto devices = adapter->devices();
+    for (const DevicePtr &device : devices) {
         removeDevice(device->ubi());
     }
 

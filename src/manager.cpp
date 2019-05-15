@@ -111,7 +111,7 @@ PendingCall *Manager::startService()
 
 AdapterPtr Manager::adapterForAddress(const QString &address) const
 {
-    Q_FOREACH (AdapterPtr adapter, d->m_adapters) {
+    for (AdapterPtr adapter : qAsConst(d->m_adapters)) {
         if (adapter->address() == address) {
             return adapter;
         }
@@ -128,7 +128,7 @@ DevicePtr Manager::deviceForAddress(const QString &address) const
 {
     DevicePtr device;
 
-    Q_FOREACH (AdapterPtr adapter, d->m_adapters) {
+    for (AdapterPtr adapter : qAsConst(d->m_adapters)) {
         DevicePtr d = adapter->deviceForAddress(address);
         if (!d) {
             continue;
@@ -248,7 +248,7 @@ PendingCall *Manager::unregisterProfile(Profile *profile)
 
 MediaPtr Manager::media() const
 {
-    return d->m_media;
+    return usableAdapter() ? usableAdapter()->media() : nullptr;
 }
 
 } // namespace BluezQt
