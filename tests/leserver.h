@@ -24,6 +24,11 @@
 
 #include "types.h"
 
+namespace BluezQt
+{
+class PendingCall;
+}
+
 class LeServer : public QObject
 {
     Q_OBJECT
@@ -32,5 +37,7 @@ public:
     explicit LeServer(BluezQt::Manager *manager, QObject *parent = nullptr);
 
 private:
+    void onCallFinished(BluezQt::PendingCall *call);
+
     BluezQt::Manager *m_manager;
 };

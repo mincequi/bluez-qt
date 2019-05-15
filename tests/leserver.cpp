@@ -39,8 +39,11 @@ LeServer::LeServer(Manager *manager, QObject *parent)
 {
     auto advertisement = new LEAdvertisement({QStringLiteral("ad100000-d901-11e8-9f8b-f2801f1b9fd1")}, this);
     auto call = m_manager->usableAdapter()->leAdvertisingManager()->registerAdvertisement(advertisement);
-    // Why does this take so long? And why does it actually succeed, but remote does not send reply?
-    call->waitForFinished();
+    connect(call, &PendingCall::finished, this, &LeServer::onCallFinished);
+}
+
+void LeServer::onCallFinished(BluezQt::PendingCall *call)
+{
     if (call->error()) {
         qWarning() << "Error registering advertisement" << call->errorText();
         return;
