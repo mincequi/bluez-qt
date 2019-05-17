@@ -26,7 +26,7 @@ Interface::Interface()
 {
 }
 
-bool Interface::parse(QString& line)
+bool Interface::parse(const QString& line)
 {
     if (line.startsWith("Service\t")) {
         m_state = State::Service;
@@ -106,7 +106,7 @@ const Properties&   Interface::properties() const
     return m_properties;
 }
 
-void Interface::parseComment(QString& line)
+void Interface::parseComment(const QString& line)
 {
     if (line.isEmpty()) {
         m_comment.append(QString());
@@ -121,7 +121,7 @@ void Interface::parseComment(QString& line)
     m_comment.last() += line;
 }
 
-void Interface::parseService(QString& line)
+void Interface::parseService(const QString& line)
 {
     QRegExp rx("Service\\t+(.+)", Qt::CaseSensitive, QRegExp::RegExp2);
     if (rx.indexIn(line) != -1) {
@@ -129,7 +129,7 @@ void Interface::parseService(QString& line)
     }
 }
 
-void Interface::parseInterface(QString& line)
+void Interface::parseInterface(const QString& line)
 {
     QRegExp rx("Interface\\t+(.+)", Qt::CaseSensitive, QRegExp::RegExp2);
     if (rx.indexIn(line) != -1) {
@@ -137,7 +137,7 @@ void Interface::parseInterface(QString& line)
     }
 }
 
-void Interface::parseObjectPath(QString& line)
+void Interface::parseObjectPath(const QString& line)
 {
     QRegExp rx("Object path\\t+(.+)", Qt::CaseSensitive, QRegExp::RegExp2);
     if (rx.indexIn(line) != -1) {

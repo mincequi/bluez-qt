@@ -31,7 +31,7 @@ class Interface
 public:
     Interface();
 
-    bool    parse(QString& line);
+    bool    parse(const QString& line);
     bool    finalize();
 
     const QStringList&  comment() const;
@@ -51,10 +51,10 @@ private:
         Properties
     };
 
-    void    parseComment(QString& line);
-    void    parseService(QString& line);
-    void    parseInterface(QString& line);
-    void    parseObjectPath(QString& line);
+    void    parseComment(const QString& line);
+    void    parseService(const QString& line);
+    void    parseInterface(const QString& line);
+    void    parseObjectPath(const QString& line);
 
     State   m_state = State::Comment;
 

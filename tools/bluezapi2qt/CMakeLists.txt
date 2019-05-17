@@ -5,7 +5,6 @@ remove_definitions(
 
 add_executable(bluezapi2qt
     BluezApiParser.cpp
-    CppGenerator.cpp
     Interface.cpp
     Method.cpp
     Methods.cpp
