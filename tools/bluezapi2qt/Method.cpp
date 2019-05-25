@@ -28,65 +28,82 @@ Method::Method()
 
 bool Method::finalize()
 {
-    for (const auto& tag : m_stringTags) {
-        m_tags.isOptional |= tag.contains("optional", Qt::CaseInsensitive);
-        m_tags.isDeprecated |= tag.contains("deprecated", Qt::CaseInsensitive);
-        m_tags.isExperimental |= tag.contains("experimental", Qt::CaseInsensitive);
+    for (const auto &tag : m_stringTags) {
+        m_tags.isOptional |= tag.contains(QStringLiteral("optional"), Qt::CaseInsensitive);
+        m_tags.isDeprecated |= tag.contains(QStringLiteral("deprecated"), Qt::CaseInsensitive);
+        m_tags.isExperimental |= tag.contains(QStringLiteral("experimental"), Qt::CaseInsensitive);
     }
 
-    m_outParameters.removeOne("void");
-    if (m_outParameters.isEmpty()) {
+    bool success = true;
+    success &= m_comment.finalize();
+
+    for (const auto &inParam : m_inParameterStrings) {
+        m_inParameters.push_back(Parameter::fromString(inParam));
+    }
+
+    m_outParameterStrings.removeOne(QStringLiteral("void"));
+    if (m_outParameterStrings.isEmpty()) {
+        m_outParameter = Parameter::fromString(QStringLiteral("void unnamend"));
         return true;
     }
 
     // Guess out parameter name from method name
     QString paramName = guessOutParameterName();
     if (!paramName.isEmpty()) {
-        m_outParameters.front() += " " + paramName;
-        return true;
+        m_outParameterStrings.front() += QStringLiteral(" ") + paramName;
+        m_outParameter = Parameter::fromString(m_outParameterStrings.front());
+    } else {
+        for (int i = 0; i < m_outParameterStrings.size(); ++i) {
+            m_outParameterStrings[i] += QStringLiteral(" value") + QString::number(i);
+        }
     }
 
-    for (int i = 0; i < m_outParameters.size(); ++i) {
-        m_outParameters[i] += " value" + QString::number(i);
+    for (const auto &outParam : m_outParameterStrings) {
+        m_outParameters.push_back(Parameter::fromString(outParam));
     }
 
-    return true;
+    return success;
 }
 
-const QString& Method::name() const
+QString Method::name() const
 {
     return m_name;
 }
 
-const QStringList& Method::inParameters() const
+QList<Parameter> Method::inParameters() const
 {
     return m_inParameters;
 }
 
-const QStringList& Method::outParameters() const
+QList<Parameter> Method::outParameters() const
 {
     return m_outParameters;
 }
 
-const Method::Tags& Method::tags() const
+Parameter Method::outParameter() const
+{
+    return m_outParameter;
+}
+
+Method::Tags Method::tags() const
 {
     return m_tags;
 }
 
-const QStringList& Method::comment() const
+QStringList Method::comment() const
 {
     return m_comment;
 }
 
 QString Method::guessOutParameterName() const
 {
-    if (m_outParameters.size() != 1) {
+    if (m_outParameterStrings.size() != 1) {
         return QString();
     }
 
-    QRegExp rx("([A-Z][a-z0-9]+)+");
+    QRegExp rx(QStringLiteral("([A-Z][a-z0-9]+)+"));
     if (rx.indexIn(m_name, 1) == -1) {
-        return QString("value");
+        return QStringLiteral("value");
     }
 
     QStringList list = rx.capturedTexts();

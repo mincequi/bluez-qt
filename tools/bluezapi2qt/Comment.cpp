@@ -20,49 +20,33 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef METHOD_H
-#define METHOD_H
-
 #include "Comment.h"
-#include "Parameter.h"
 
-class Method
+bool Comment::finalize()
 {
-public:
-    struct Tags {
-        bool isOptional = false;
-        bool isDeprecated = false;
-        bool isExperimental = false;
-    };
+    // Delete last empty lines from comment
+    while (last().isEmpty()) {
+        removeLast();
+    }
 
-    Method();
+    // Find indents
+    int indents = 255;
+    for (const auto &line : *this) {
+        if (line.isEmpty()) {
+            continue;
+        }
+        indents = std::min(indents, line.count(QStringLiteral("\t")));
+    }
 
-    bool finalize();
+    // Remove indents
+    for (auto &line : *this) {
+        line.remove(0, indents);
+    }
 
-    QString      name() const;
-    QList<Parameter> inParameters() const;
-    QList<Parameter> outParameters() const;
-    Parameter    outParameter() const;
-    Tags         tags() const;
-    QStringList  comment() const;
+    // Replace indents
+    for (auto &line : *this) {
+        line.replace(QStringLiteral("\t"), QStringLiteral("    "));
+    }
 
-private:
-    QString     guessOutParameterName() const;
-
-    QString     m_name;
-    QStringList m_inParameterStrings;
-    QStringList m_outParameterStrings;
-    Parameter   m_outParameter;
-    QStringList m_stringTags;
-    QString     m_limitation;
-    Comment     m_comment;
-
-    // finalized members
-    Tags    m_tags;
-    QList<Parameter> m_inParameters;
-    QList<Parameter> m_outParameters;
-
-    friend class Methods;
-};
-
-#endif // METHOD_H
+    return true;
+}

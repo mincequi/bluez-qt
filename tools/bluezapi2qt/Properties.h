@@ -23,17 +23,21 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
-class QString;
+#include "Property.h"
 
 class Properties
 {
 public:
     Properties();
 
-    bool parse(const QString& line);
+    void parse(const QString &line);
     bool finalize();
 
+    const std::list<Property>&    properties() const;
+
 private:
+    std::list<Property>   m_properties;
+    Property*             m_currentProperty = nullptr;
 };
 
 #endif // PROPERTIES_H

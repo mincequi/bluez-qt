@@ -30,16 +30,16 @@ class Methods
 public:
     Methods();
 
-    static bool isMethod(const QString& line);
+    static bool isMethod(const QString &line);
 
-    void parse(const QString& line);
+    void parse(const QString &line);
     bool finalize();
 
-    const std::list<Method>&    methods() const;
+    const std::list<Method> &methods() const;
 
 private:
     std::list<Method>   m_methods;
-    Method*             m_currentMethod = nullptr;
+    Method             *m_currentMethod = nullptr;
 };
 
 #endif // METHODS_H

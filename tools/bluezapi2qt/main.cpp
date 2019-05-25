@@ -28,16 +28,14 @@
 #include <QTextStream>
 
 #include "BluezApiParser.h"
+#include "CppGenerator.h"
 #include "XmlGenerator.h"
-
-#define PROGRAMNAME     "bluezapi2qt"
-#define PROGRAMVERSION  "0.1"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    QCoreApplication::setApplicationName(PROGRAMNAME);
-    QCoreApplication::setApplicationVersion(PROGRAMVERSION);
+    QCoreApplication::setApplicationName(QStringLiteral("bluezapi2qt"));
+    QCoreApplication::setApplicationVersion(QStringLiteral("0.1"));
 
     // Add command line parsing
     QCommandLineParser parser;
@@ -52,6 +50,14 @@ int main(int argc, char *argv[])
     parser.addOption(experimentalOption);
     QCommandLineOption optionalOption(QStringList() << "o" << "optional", "Generate optional methods/properties");
     parser.addOption(optionalOption);
+    QCommandLineOption xmlOption(QStringList() << "x" << "xml", "Generate D-Bus object introspection XML files");
+    parser.addOption(xmlOption);
+    QCommandLineOption cppOption(QStringList() << "c" << "cpp", "Generate D-Bus interface adaptor C++ files");
+    parser.addOption(cppOption);
+    QCommandLineOption authorOption(QStringList() << "a" << "author",  "Author for copyright header in C++ files", "author");
+    parser.addOption(authorOption);
+    QCommandLineOption yearOption(QStringList() << "y" << "year",  "Year for copyright header in C++ files", "year");
+    parser.addOption(yearOption);
     parser.process(a);
 
     // Open file
@@ -85,14 +91,27 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    XmlGenerator::Config xmlConfig;
-    xmlConfig.useOptional = parser.isSet(optionalOption);;
-    xmlConfig.useDeprecated = parser.isSet(deprecatedOption);;
-    xmlConfig.useExperimental = parser.isSet(experimentalOption);;
-    XmlGenerator xmlGenerator(xmlConfig);
-    if (!xmlGenerator.generate(bluezParser)) {
-        qCritical() << "Error generating xml";
-        return 1;
+    if (parser.isSet(xmlOption)) {
+        XmlGenerator::Config xmlConfig;
+        xmlConfig.useOptional = parser.isSet(optionalOption);;
+        xmlConfig.useDeprecated = parser.isSet(deprecatedOption);;
+        xmlConfig.useExperimental = parser.isSet(experimentalOption);;
+        XmlGenerator xmlGenerator(xmlConfig);
+        if (!xmlGenerator.generate(bluezParser)) {
+            qCritical() << "Error generating xml";
+            return 1;
+        }
+    }
+
+    if (parser.isSet(cppOption)) {
+        CppGenerator::Config cppConfig;
+        cppConfig.author = parser.value(authorOption);
+        cppConfig.year = parser.value(yearOption);
+        CppGenerator cppGenerator(cppConfig);
+        if (!cppGenerator.generate(bluezParser)) {
+            qCritical() << "Error generating C++ files";
+            return 1;
+        }
     }
 
     return 0;
