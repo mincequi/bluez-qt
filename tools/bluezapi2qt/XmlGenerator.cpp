@@ -28,22 +28,22 @@
 #include "BluezApiParser.h"
 #include "TypeAnnotation.h"
 
-XmlGenerator::XmlGenerator(const Config& config) :
+XmlGenerator::XmlGenerator(const Config &config) :
     m_config(config)
 {
 }
 
-bool XmlGenerator::generate(const BluezApiParser& parser)
+bool XmlGenerator::generate(const BluezApiParser &parser)
 {
     // Iterate interfaces
-    for (const auto& interface : parser.interfaces()) {
+    for (const auto &interface : parser.interfaces()) {
         // Only consider interfaces with methods
         if (interface.methods().methods().empty()) {
             continue;
         }
 
         // Create file
-        QFile file(interface.name() + ".xml");
+        QFile file(interface.name() + QStringLiteral(".xml"));
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
             qWarning() << "Error opening file for writing:" << file.fileName();
             return false;
@@ -55,7 +55,7 @@ bool XmlGenerator::generate(const BluezApiParser& parser)
         writeInterface(stream, interface.name());
 
         // Iterate methods
-        for (const auto& method : interface.methods().methods()) {
+        for (const auto &method : interface.methods().methods()) {
             // Respect config
             if ((method.tags().isDeprecated && !m_config.useDeprecated) ||
                 (method.tags().isOptional && !m_config.useOptional) ||
@@ -74,29 +74,29 @@ bool XmlGenerator::generate(const BluezApiParser& parser)
     return true;
 }
 
-void XmlGenerator::writeHeader(QTextStream& stream)
+void XmlGenerator::writeHeader(QTextStream &stream)
 {
     stream << "<?xml version=\"1.0\"?>" << endl;
     stream << "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">" << endl;
     stream << "<node>" << endl;
 }
 
-void XmlGenerator::writeFooter(QTextStream& stream)
+void XmlGenerator::writeFooter(QTextStream &stream)
 {
     stream << "</node>" << endl;
 }
 
-void XmlGenerator::writeInterface(QTextStream& stream, const QString& name)
+void XmlGenerator::writeInterface(QTextStream &stream, const QString &name)
 {
     stream << "  <interface name=\"" << name << "\">" << endl;
 }
 
-void XmlGenerator::closeInterface(QTextStream& stream)
+void XmlGenerator::closeInterface(QTextStream &stream)
 {
     stream << "  </interface>" << endl;
 }
 
-bool XmlGenerator::writeMethod(QTextStream& stream, const Method& method)
+bool XmlGenerator::writeMethod(QTextStream &stream, const Method &method)
 {
     stream << "    <method name=\"" << method.name()  << "\"";
 
@@ -108,21 +108,21 @@ bool XmlGenerator::writeMethod(QTextStream& stream, const Method& method)
 
     stream << ">" << endl;
 
-    for (const auto& param : method.inParameters()) {
-        if (!writeArg(stream, param, "in")) {
+    for (const auto &param : method.inParameters()) {
+        if (!writeArg(stream, param, QStringLiteral("in"))) {
             return false;
         }
     }
-    for (const auto& param : method.outParameters()) {
-        if (!writeArg(stream, param, "out")) {
+    for (const auto &param : method.outParameters()) {
+        if (!writeArg(stream, param, QStringLiteral("out"))) {
             return false;
         }
     }
     for (int i = 0; i < method.inParameters().size(); ++i) {
-        writeAnnotation(stream, method.inParameters().at(i), "In", i);
+        writeAnnotation(stream, method.inParameters().at(i), QStringLiteral("In"), i);
     }
     for (int i = 0; i < method.outParameters().size(); ++i) {
-        writeAnnotation(stream, method.outParameters().at(i), "Out", i);
+        writeAnnotation(stream, method.outParameters().at(i), QStringLiteral("Out"), i);
     }
 
     stream << "    </method>" << endl;
@@ -130,26 +130,21 @@ bool XmlGenerator::writeMethod(QTextStream& stream, const Method& method)
     return true;
 }
 
-bool XmlGenerator::writeArg(QTextStream& stream, const QString& param, const QString& dir)
+bool XmlGenerator::writeArg(QTextStream &stream, const Parameter &param, const QString &dir)
 {
-    QStringList arg = param.split(" ");
-    if (arg.size() != 2) {
-        return false;
-    }
-    auto dbusType = annotateType(AnnotationType::Bluez, AnnotationType::Dbus, arg.first());
+    auto dbusType = annotateType(AnnotationType::Bluez, AnnotationType::Dbus, param.type());
     if (dbusType.isEmpty()) {
         return false;
     }
-    stream << "      <arg name=\"" << arg.at(1) << "\" type=\"" << dbusType <<
+    stream << "      <arg name=\"" << param.name() << "\" type=\"" << dbusType <<
               "\" direction=\"" << dir << "\"/>" << endl;
 
     return true;
 }
 
-void XmlGenerator::writeAnnotation(QTextStream& stream, const QString& param, const QString& dir, int i)
+void XmlGenerator::writeAnnotation(QTextStream &stream, const Parameter &param, const QString &dir, int i)
 {
-    QStringList arg = param.split(" ");
-    auto qtType = annotateType(AnnotationType::Bluez, AnnotationType::Qt, arg.first());
+    auto qtType = annotateType(AnnotationType::Bluez, AnnotationType::Qt, param.type());
     if (qtType.isEmpty()) {
         return;
     }

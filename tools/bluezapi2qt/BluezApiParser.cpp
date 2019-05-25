@@ -28,13 +28,13 @@ BluezApiParser::BluezApiParser()
 {
 }
 
-bool BluezApiParser::parse(QTextStream& stream)
+bool BluezApiParser::parse(QTextStream &stream)
 {
     while (!stream.atEnd()) {
         // Get next line
         auto line = stream.readLine();
         // Just look for section markers
-        if (line.startsWith('=')) {
+        if (line.startsWith(L'=')) {
             m_interfaces.emplace_back(Interface());
             m_currentInterface = &m_interfaces.back();
         } else if (m_currentInterface) {
@@ -51,14 +51,18 @@ bool BluezApiParser::finalize()
 {
     bool success = true;
 
-    for (auto& interface : m_interfaces) {
+    m_interfaces.erase(std::remove_if(m_interfaces.begin(), m_interfaces.end(), [](const Interface &interface) {
+        return interface.methods().methods().empty() && interface.properties().properties().empty();
+    }), m_interfaces.end());
+
+    for (auto &interface : m_interfaces) {
         success &= interface.finalize();
     }
 
     return success;
 }
 
-const std::list<Interface>& BluezApiParser::interfaces() const
+const std::list<Interface> &BluezApiParser::interfaces() const
 {
     return m_interfaces;
 }

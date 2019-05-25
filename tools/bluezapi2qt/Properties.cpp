@@ -22,19 +22,56 @@
 
 #include "Properties.h"
 
-#include <QString>
+#include <QRegExp>
+#include <QStringList>
 
 Properties::Properties()
 {
 }
 
-bool Properties::parse(const QString& line)
+void Properties::parse(const QString &line)
 {
-    Q_UNUSED(line);
-    return true;
+    QRegExp rx(QStringLiteral(
+               "(?:Properties|^)"   // Properties keyword or start of line
+               "\\t{1,2}"           // preceding tabs (max 2)
+               "([a-z1-6{}_]+)"     // type name
+               " "                  // space
+               "([A-Z]\\w+)"        // method name
+               "(?: \\[(.*)\\])?"   // tags
+               "(?: \\((.*)\\))?"   // limitations
+               ), Qt::CaseSensitive, QRegExp::RegExp2);
+
+    // Check if we match a property
+    if (rx.indexIn(line) != -1) {
+        QStringList list = rx.capturedTexts();
+        m_properties.emplace_back(Property());
+        m_currentProperty = &m_properties.back();
+        m_currentProperty->m_type = list.at(1).toLower();
+        m_currentProperty->m_name = list.at(2);
+        m_currentProperty->m_stringTags = list.at(3).toLower().split(QStringLiteral(", "), QString::SkipEmptyParts);
+        m_currentProperty->m_limitation = list.at(4).toLower();
+    } else if (m_currentProperty) {
+        // Skip first empty line
+        if (line.isEmpty() && m_currentProperty->m_comment.isEmpty()) {
+            return;
+        }
+        m_currentProperty->m_comment.append(line);
+    }
 }
 
 bool Properties::finalize()
 {
-    return true;
+    bool success = true;
+
+    for (auto &property : m_properties) {
+        success &= property.finalize();
+    }
+
+    return success;
+}
+
+
+const std::list<Property> &Properties::properties() const
+{
+    return m_properties;
 }

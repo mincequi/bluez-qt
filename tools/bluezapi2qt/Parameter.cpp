@@ -20,49 +20,28 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef METHOD_H
-#define METHOD_H
-
-#include "Comment.h"
 #include "Parameter.h"
 
-class Method
+Parameter Parameter::fromString(const QString &string)
 {
-public:
-    struct Tags {
-        bool isOptional = false;
-        bool isDeprecated = false;
-        bool isExperimental = false;
-    };
+    Parameter param;
+    QStringList arg = string.split(QStringLiteral(" "));
+    if (arg.size() != 2) {
+        return param;
+    }
 
-    Method();
+    param.m_type = arg.first();
+    param.m_name = arg.last();
 
-    bool finalize();
+    return param;
+}
 
-    QString      name() const;
-    QList<Parameter> inParameters() const;
-    QList<Parameter> outParameters() const;
-    Parameter    outParameter() const;
-    Tags         tags() const;
-    QStringList  comment() const;
+const QString &Parameter::type() const
+{
+    return m_type;
+}
 
-private:
-    QString     guessOutParameterName() const;
-
-    QString     m_name;
-    QStringList m_inParameterStrings;
-    QStringList m_outParameterStrings;
-    Parameter   m_outParameter;
-    QStringList m_stringTags;
-    QString     m_limitation;
-    Comment     m_comment;
-
-    // finalized members
-    Tags    m_tags;
-    QList<Parameter> m_inParameters;
-    QList<Parameter> m_outParameters;
-
-    friend class Methods;
-};
-
-#endif // METHOD_H
+const QString &Parameter::name() const
+{
+    return m_name;
+}

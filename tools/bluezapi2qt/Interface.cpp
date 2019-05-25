@@ -26,19 +26,19 @@ Interface::Interface()
 {
 }
 
-bool Interface::parse(const QString& line)
+bool Interface::parse(const QString &line)
 {
-    if (line.startsWith("Service\t")) {
+    if (line.startsWith(QStringLiteral("Service\t"))) {
         m_state = State::Service;
-    } else if (line.startsWith("Interface\t")) {
+    } else if (line.startsWith(QStringLiteral("Interface\t"))) {
         m_state = State::Interface;
-    } else if (line.startsWith("Object path\t")) {
+    } else if (line.startsWith(QStringLiteral("Object path\t"))) {
         m_state = State::ObjectPath;
-    } else if (line.startsWith("Methods\t") || Methods::isMethod(line)) {  // Argh! AgentManager is missing the Methods keyword
+    } else if (line.startsWith(QStringLiteral("Methods\t")) || Methods::isMethod(line)) {  // Argh! AgentManager is missing the Methods keyword
         m_state = State::Methods;
-    } else if (line.startsWith("Properties\t")) {
+    } else if (line.startsWith(QStringLiteral("Properties\t"))) {
         m_state = State::Properties;
-    } else if (m_state != State::Comment && !line.isEmpty() && !line.startsWith('\t')) {
+    } else if (m_state != State::Comment && !line.isEmpty() && !line.startsWith(QStringLiteral("\t"))) {
         // If we do not parse comment, but line starts with characters, we are done.
         return false;
     }
@@ -77,69 +77,69 @@ bool Interface::finalize()
     return success;
 }
 
-const QStringList&  Interface::comment() const
+const QStringList &Interface::comment() const
 {
     return m_comment;
 }
-const QString&      Interface::service() const
+const QString &Interface::service() const
 {
     return m_service;
 }
 
-const QString&      Interface::name() const
+const QString &Interface::name() const
 {
     return m_name;
 }
 
-const QString&      Interface::objectPath() const
+const QString &Interface::objectPath() const
 {
     return m_objectPath;
 }
 
-const Methods&      Interface::methods() const
+const Methods &Interface::methods() const
 {
     return m_methods;
 }
 
-const Properties&   Interface::properties() const
+const Properties &Interface::properties() const
 {
     return m_properties;
 }
 
-void Interface::parseComment(const QString& line)
+void Interface::parseComment(const QString &line)
 {
     if (line.isEmpty()) {
         m_comment.append(QString());
         return;
-    } else if (line.startsWith(' ') || line.startsWith('\t')) {
+    } else if (line.startsWith(QStringLiteral(" ")) || line.startsWith(QStringLiteral("\t"))) {
         m_comment.append(QString());
     }
 
     if (!m_comment.last().isEmpty()) {
-        m_comment.last() += QString(" ");
+        m_comment.last() += QStringLiteral(" ");
     }
     m_comment.last() += line;
 }
 
-void Interface::parseService(const QString& line)
+void Interface::parseService(const QString &line)
 {
-    QRegExp rx("Service\\t+(.+)", Qt::CaseSensitive, QRegExp::RegExp2);
+    QRegExp rx(QStringLiteral("Service\\t+(.+)"), Qt::CaseSensitive, QRegExp::RegExp2);
     if (rx.indexIn(line) != -1) {
         m_service = rx.capturedTexts().last();
     }
 }
 
-void Interface::parseInterface(const QString& line)
+void Interface::parseInterface(const QString &line)
 {
-    QRegExp rx("Interface\\t+(.+)", Qt::CaseSensitive, QRegExp::RegExp2);
+    QRegExp rx(QStringLiteral("Interface\\t+(.+)"), Qt::CaseSensitive, QRegExp::RegExp2);
     if (rx.indexIn(line) != -1) {
         m_name = rx.capturedTexts().last();
     }
 }
 
-void Interface::parseObjectPath(const QString& line)
+void Interface::parseObjectPath(const QString &line)
 {
-    QRegExp rx("Object path\\t+(.+)", Qt::CaseSensitive, QRegExp::RegExp2);
+    QRegExp rx(QStringLiteral("Object path\\t+(.+)"), Qt::CaseSensitive, QRegExp::RegExp2);
     if (rx.indexIn(line) != -1) {
         m_objectPath = rx.capturedTexts().last();
     }

@@ -32,14 +32,14 @@ class BluezApiParser
 public:
     BluezApiParser();
 
-    bool parse(QTextStream& stream);
+    bool parse(QTextStream &stream);
     bool finalize();
 
-    const std::list<Interface>& interfaces() const;
+    const std::list<Interface> &interfaces() const;
 
 private:
     std::list<Interface> m_interfaces;
-    Interface* m_currentInterface = nullptr;
+    Interface *m_currentInterface = nullptr;
 };
 
 #endif // PARSER_H

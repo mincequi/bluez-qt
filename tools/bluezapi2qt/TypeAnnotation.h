@@ -30,6 +30,8 @@ enum class AnnotationType {
     Dbus    = 1,
     Qt      = 2
 };
-QString annotateType(AnnotationType from, AnnotationType to, const QString& type);
+QString annotateType(AnnotationType from, AnnotationType to, const QString &type);
+
+QString bluezToQt(const QString &type);
 
 #endif // TYPEANNOTATION_H

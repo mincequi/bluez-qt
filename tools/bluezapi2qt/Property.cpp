@@ -20,49 +20,44 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef METHOD_H
-#define METHOD_H
+#include "Property.h"
 
-#include "Comment.h"
-#include "Parameter.h"
-
-class Method
+Property::Property()
 {
-public:
-    struct Tags {
-        bool isOptional = false;
-        bool isDeprecated = false;
-        bool isExperimental = false;
-    };
+}
 
-    Method();
+bool Property::finalize()
+{
+    for (const auto &tag : m_stringTags) {
+        m_tags.isOptional |= tag.contains(QStringLiteral("optional"), Qt::CaseInsensitive);
+        m_tags.isExperimental |= tag.contains(QStringLiteral("experimental"), Qt::CaseInsensitive);
+        m_tags.isReadOnly |= tag.contains(QStringLiteral("read-only"), Qt::CaseInsensitive);
+    }
+    m_tags.isServerOnly = m_limitation.contains(QStringLiteral("server only"), Qt::CaseInsensitive);
 
-    bool finalize();
+    bool success = true;
+    success &= m_comment.finalize();
 
-    QString      name() const;
-    QList<Parameter> inParameters() const;
-    QList<Parameter> outParameters() const;
-    Parameter    outParameter() const;
-    Tags         tags() const;
-    QStringList  comment() const;
+    return success;
+}
 
-private:
-    QString     guessOutParameterName() const;
+const QString& Property::name() const
+{
+    return m_name;
+}
 
-    QString     m_name;
-    QStringList m_inParameterStrings;
-    QStringList m_outParameterStrings;
-    Parameter   m_outParameter;
-    QStringList m_stringTags;
-    QString     m_limitation;
-    Comment     m_comment;
+const QString& Property::type() const
+{
+    return m_type;
+}
 
-    // finalized members
-    Tags    m_tags;
-    QList<Parameter> m_inParameters;
-    QList<Parameter> m_outParameters;
+const Property::Tags& Property::tags() const
+{
+    return m_tags;
+}
 
-    friend class Methods;
-};
+const QStringList& Property::comment() const
+{
+    return m_comment;
+}
 
-#endif // METHOD_H

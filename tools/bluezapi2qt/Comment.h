@@ -20,50 +20,17 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef COMMENT_H
+#define COMMENT_H
 
-#include "Methods.h"
-#include "Properties.h"
+#include <QStringList>
 
-class Interface
+class Comment : public QStringList
 {
 public:
-    Interface();
+    using QStringList::QStringList;
 
-    bool    parse(const QString &line);
-    bool    finalize();
-
-    const QStringList &comment() const;
-    const QString     &service() const;
-    const QString     &name() const;
-    const QString     &objectPath() const;
-    const Methods     &methods() const;
-    const Properties  &properties() const;
-
-private:
-    enum class State {
-        Comment,
-        Service,
-        Interface,
-        ObjectPath,
-        Methods,
-        Properties
-    };
-
-    void    parseComment(const QString &line);
-    void    parseService(const QString &line);
-    void    parseInterface(const QString &line);
-    void    parseObjectPath(const QString &line);
-
-    State   m_state = State::Comment;
-
-    QStringList m_comment;
-    QString     m_service;
-    QString     m_name;
-    QString     m_objectPath;
-    Methods     m_methods;
-    Properties  m_properties;
+    bool finalize();
 };
 
-#endif // INTERFACE_H
+#endif // COMMENT_H

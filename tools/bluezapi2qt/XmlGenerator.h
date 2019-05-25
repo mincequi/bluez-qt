@@ -25,6 +25,7 @@
 
 class BluezApiParser;
 class Method;
+class Parameter;
 class QString;
 class QStringList;
 class QTextStream;
@@ -37,18 +38,18 @@ public:
         bool useDeprecated = false;
         bool useExperimental = false;
     };
-    XmlGenerator(const Config& config);
+    XmlGenerator(const Config &config);
 
-    bool generate(const BluezApiParser& parser);
+    bool generate(const BluezApiParser &parser);
 
 private:
-    static void writeHeader(QTextStream& stream);
-    static void writeFooter(QTextStream& stream);
-    static void writeInterface(QTextStream& stream, const QString& name);
-    static void closeInterface(QTextStream& stream);
-    static bool writeMethod(QTextStream& stream, const Method& method);
-    static bool writeArg(QTextStream& stream, const QString& param, const QString& dir);
-    static void writeAnnotation(QTextStream& stream, const QString& param, const QString& dir, int i);
+    static void writeHeader(QTextStream &stream);
+    static void writeFooter(QTextStream &stream);
+    static void writeInterface(QTextStream &stream, const QString &name);
+    static void closeInterface(QTextStream &stream);
+    static bool writeMethod(QTextStream &stream, const Method &method);
+    static bool writeArg(QTextStream &stream, const Parameter &param, const QString &dir);
+    static void writeAnnotation(QTextStream &stream, const Parameter &param, const QString &dir, int i);
 
     Config  m_config;
 };

@@ -20,50 +20,38 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#pragma once
 
-#include "Methods.h"
-#include "Properties.h"
+#include "Comment.h"
 
-class Interface
+class Property
 {
 public:
-    Interface();
-
-    bool    parse(const QString &line);
-    bool    finalize();
-
-    const QStringList &comment() const;
-    const QString     &service() const;
-    const QString     &name() const;
-    const QString     &objectPath() const;
-    const Methods     &methods() const;
-    const Properties  &properties() const;
-
-private:
-    enum class State {
-        Comment,
-        Service,
-        Interface,
-        ObjectPath,
-        Methods,
-        Properties
+    struct Tags {
+        bool isOptional = false;
+        bool isExperimental = false;
+        bool isReadOnly    = false;
+        bool isServerOnly   = false;
     };
 
-    void    parseComment(const QString &line);
-    void    parseService(const QString &line);
-    void    parseInterface(const QString &line);
-    void    parseObjectPath(const QString &line);
+    Property();
 
-    State   m_state = State::Comment;
+    bool finalize();
 
-    QStringList m_comment;
-    QString     m_service;
+    const QString&      name() const;
+    const QString&      type() const;
+    const Tags&         tags() const;
+    const QStringList&  comment() const;
+
+private:
     QString     m_name;
-    QString     m_objectPath;
-    Methods     m_methods;
-    Properties  m_properties;
-};
+    QString     m_type;
+    QStringList m_stringTags;
+    QString     m_limitation;
+    Comment     m_comment;
 
-#endif // INTERFACE_H
+    // finalized members
+    Tags    m_tags;
+
+    friend class Properties;
+};

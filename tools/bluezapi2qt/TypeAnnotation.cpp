@@ -24,9 +24,9 @@
 
 #include <vector>
 
-QString annotateType(AnnotationType from, AnnotationType to, const QString& type)
+QString annotateType(AnnotationType from, AnnotationType to, const QString &type)
 {
-    static const std::vector<std::vector<QString>> table = {
+    static const std::vector<std::vector<std::string>> table = {
         {"boolean",        "b",         ""},
         //{{"fd"},             "",       ""},
         {"object",         "o",         ""},
@@ -39,11 +39,33 @@ QString annotateType(AnnotationType from, AnnotationType to, const QString& type
         {"array{string}",  "as",        ""},
     };
 
-    for (const auto& entry : table) {
-        if (entry.at(static_cast<size_t>(from)) == type) {
-            return entry.at(static_cast<size_t>(to));
+    for (const auto &entry : table) {
+        if (entry.at(static_cast<size_t>(from)) == type.toStdString()) {
+            return QString::fromStdString(entry.at(static_cast<size_t>(to)));
         }
     }
 
     return QString();
+}
+
+QString bluezToQt(const QString &type)
+{
+    static const std::vector<std::vector<std::string>> table = {
+        {"boolean",         "bool"},
+        //{{"fd"},           ""},
+        {"object",          "QDBusObjectPath"},
+        {"string",          "QString"},
+        {"dict",            "QVariantMap"},
+        {"array{byte}",     "QByteArray"},
+        {"array{dict}",     "QVariantMapList"},
+        {"array{string}",   "QStringList"},
+    };
+
+    for (const auto &entry : table) {
+        if (entry.front() == type.toStdString()) {
+            return QString::fromStdString(entry.back());
+        }
+    }
+
+    return type;
 }
