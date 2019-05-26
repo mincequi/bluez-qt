@@ -49,7 +49,7 @@ public:
      *
      * @param parent
      */
-    explicit LEAdvertisement(const QStringList& serviceUuids, QObject *parent = nullptr);
+    explicit LEAdvertisement(const QStringList &serviceUuids, QObject *parent = nullptr);
 
     /**
      * Destroys a LEAdvertisement object.

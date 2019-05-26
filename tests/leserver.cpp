@@ -25,6 +25,10 @@
 
 #include "adapter.h"
 #include "device.h"
+#include "gattapplication.h"
+#include "gattcharacteristic.h"
+#include "gattmanager.h"
+#include "gattservice.h"
 #include "initmanagerjob.h"
 #include "leadvertisement.h"
 #include "leadvertisingmanager.h"
@@ -40,12 +44,18 @@ LeServer::LeServer(Manager *manager, QObject *parent)
     auto advertisement = new LEAdvertisement({QStringLiteral("ad100000-d901-11e8-9f8b-f2801f1b9fd1")}, this);
     auto call = m_manager->usableAdapter()->leAdvertisingManager()->registerAdvertisement(advertisement);
     connect(call, &PendingCall::finished, this, &LeServer::onCallFinished);
+
+    auto application = new GattApplication(this);
+    auto service = new GattService(QStringLiteral("ad100000-d901-11e8-9f8b-f2801f1b9fd1"), true, application);
+    auto charc = new GattCharacteristic(QStringLiteral("ad10e100-d901-11e8-9f8b-f2801f1b9fd1"), service);
+    auto call2 = m_manager->usableAdapter()->gattManager()->registerApplication(application);
+    connect(call2, &PendingCall::finished, this, &LeServer::onCallFinished);
 }
 
 void LeServer::onCallFinished(BluezQt::PendingCall *call)
 {
     if (call->error()) {
-        qWarning() << "Error registering advertisement" << call->errorText();
+        qWarning() << "Error: " << call->errorText();
         return;
     }
 }
@@ -70,6 +80,10 @@ int main(int argc, char **argv)
     }
     if (!manager->usableAdapter()->leAdvertisingManager()) {
         qWarning() << "No LE advertising manager";
+        return 2;
+    }
+    if (!manager->usableAdapter()->gattManager()) {
+        qWarning() << "No GATT manager";
         return 2;
     }
 

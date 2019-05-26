@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,42 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#pragma once
+
+#include <QDBusAbstractAdaptor>
+
+class QDBusObjectPath;
 
 namespace BluezQt
 {
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+class GattCharacteristic;
+
+class GattCharacteristicAdaptor : public QDBusAbstractAdaptor
 {
-    QString objectPath = QStringLiteral("/LEAdvertisements/");
-    if (!serviceUuids.isEmpty()) {
-        objectPath += QString(serviceUuids.front()).replace(QChar::fromLatin1('-'), QChar::fromLatin1('_'));
-    }
-    m_objectPath.setPath(objectPath);
-}
+    Q_OBJECT 
+    Q_CLASSINFO("D-Bus Interface", "org.bluez.GattCharacteristic1")
+    Q_PROPERTY(QString UUID READ uuid)
+    Q_PROPERTY(QDBusObjectPath Service READ service)
+    Q_PROPERTY(QStringList Flags READ flags)
+
+public:
+    explicit GattCharacteristicAdaptor(GattCharacteristic *parent);
+
+    QString uuid() const;
+
+    QDBusObjectPath service() const;
+
+    QStringList flags() const;
+
+public Q_SLOTS:
+    QByteArray ReadValue(const QVariantMap &options);
+    void WriteValue(const QByteArray &value, const QVariantMap &options);
+    void StartNotify();
+    void StopNotify();
+
+private:
+    GattCharacteristic* m_gattCharacteristic;
+};
 
 } // namespace BluezQt

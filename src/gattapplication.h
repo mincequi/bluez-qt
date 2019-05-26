@@ -1,7 +1,7 @@
 /*
- * BluezQt - Asynchronous Bluez wrapper library
+ * BluezQt - Asynchronous BlueZ wrapper library
  *
- * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,47 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#pragma once
+
+#include "objectmanager.h"
+
+class QDBusObjectPath;
 
 namespace BluezQt
 {
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+/**
+ * @class BluezQt::GattApplication GattApplication.h <BluezQt/GattApplication>
+ *
+ * Bluetooth GattApplication.
+ *
+ * This class represents a Bluetooth GattApplication.
+ */
+class BLUEZQT_EXPORT GattApplication : public ObjectManager
 {
-    QString objectPath = QStringLiteral("/LEAdvertisements/");
-    if (!serviceUuids.isEmpty()) {
-        objectPath += QString(serviceUuids.front()).replace(QChar::fromLatin1('-'), QChar::fromLatin1('_'));
-    }
-    m_objectPath.setPath(objectPath);
-}
+    Q_OBJECT
+
+public:
+    /**
+     * Creates a new GattApplication object.
+     *
+     * @param parent
+     */
+    explicit GattApplication(QObject *parent = nullptr);
+
+    /**
+     * Destroys a GattApplication object.
+     */
+    ~GattApplication();
+
+private:
+    DBusManagerStruct getManagedObjects() const override;
+    QDBusObjectPath objectPath() const;
+
+    QDBusObjectPath m_objectPath;
+
+    friend class GattManager;
+    friend class GattService;
+};
 
 } // namespace BluezQt

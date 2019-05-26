@@ -146,6 +146,11 @@ QString Adapter::modalias() const
     return d->m_modalias;
 }
 
+GattManagerPtr Adapter::gattManager() const
+{
+    return d->m_gattManager;
+}
+
 LEAdvertisingManagerPtr Adapter::leAdvertisingManager() const
 {
     return d->m_leAdvertisingManager;

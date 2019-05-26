@@ -196,6 +196,7 @@ private:
     friend class Manager;
     friend class Adapter;
     friend class Device;
+    friend class GattManager;
     friend class LEAdvertisingManager;
     friend class Media;
     friend class MediaPlayer;

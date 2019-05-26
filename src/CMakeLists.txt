@@ -6,6 +6,12 @@ set(bluezqt_SRCS
     adapter_p.cpp
     device.cpp
     device_p.cpp
+    gattapplication.cpp
+    gattcharacteristic.cpp
+    gattcharacteristicadaptor.cpp
+    gattmanager.cpp
+    gattservice.cpp
+    gattserviceadaptor.cpp
     input.cpp
     leadvertisement.cpp
     leadvertisement_p.cpp
@@ -18,6 +24,8 @@ set(bluezqt_SRCS
     mediaplayer.cpp
     mediaplayer_p.cpp
     mediaplayertrack.cpp
+    objectmanager.cpp
+    objectmanageradaptor.cpp
     devicesmodel.cpp
     job.cpp
     initmanagerjob.cpp
@@ -95,7 +103,13 @@ ecm_generate_headers(BluezQt_CamelCase_HEADERS
         Manager
         Adapter
         Device
+        GattApplication
+        GattCharacteristic
+        GattManager
+        GattService
         Input
+        LEAdvertisement
+        LEAdvertisingManager
         Media
         MediaEndpoint
         MediaPlayer

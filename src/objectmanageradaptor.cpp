@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,21 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#include "objectmanageradaptor.h"
+#include "objectmanager.h"
 
 namespace BluezQt
 {
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+ObjectManagerAdaptor::ObjectManagerAdaptor(ObjectManager *parent)
+    : QDBusAbstractAdaptor(parent)
+    , m_objectManager(parent)
 {
-    QString objectPath = QStringLiteral("/LEAdvertisements/");
-    if (!serviceUuids.isEmpty()) {
-        objectPath += QString(serviceUuids.front()).replace(QChar::fromLatin1('-'), QChar::fromLatin1('_'));
-    }
-    m_objectPath.setPath(objectPath);
+}
+
+DBusManagerStruct ObjectManagerAdaptor::GetManagedObjects()
+{
+    return m_objectManager->getManagedObjects();
 }
 
 } // namespace BluezQt

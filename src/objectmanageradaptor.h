@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,33 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#pragma once
+
+#include <QDBusAbstractAdaptor>
+
+#include "bluezqt_dbustypes.h"
+#include "objectmanager.h"
 
 namespace BluezQt
 {
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+class ObjectManagerAdaptor : public QDBusAbstractAdaptor
 {
-    QString objectPath = QStringLiteral("/LEAdvertisements/");
-    if (!serviceUuids.isEmpty()) {
-        objectPath += QString(serviceUuids.front()).replace(QChar::fromLatin1('-'), QChar::fromLatin1('_'));
-    }
-    m_objectPath.setPath(objectPath);
-}
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.DBus.ObjectManager")
+
+public:
+    explicit ObjectManagerAdaptor(ObjectManager *parent);
+
+public Q_SLOTS:
+    DBusManagerStruct GetManagedObjects();
+
+Q_SIGNALS:
+    void InterfacesAdded(const QDBusObjectPath &object, const QVariantMapMap &interfaces);
+    void InterfacesRemoved(const QDBusObjectPath &object, const QStringList &interfaces);
+
+private:
+    ObjectManager *m_objectManager;
+};
 
 } // namespace BluezQt

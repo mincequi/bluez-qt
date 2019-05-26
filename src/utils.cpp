@@ -44,6 +44,7 @@ public:
     QString orgBluezAdapter1;
     QString orgBluezDevice1;
     QString orgBluezInput1;
+    QString orgBluezGattManager1;
     QString orgBluezLEAdvertisingManager1;
     QString orgBluezMedia1;
     QString orgBluezMediaPlayer1;
@@ -67,6 +68,7 @@ GlobalData::GlobalData()
     orgBluezAdapter1 = QStringLiteral("org.bluez.Adapter1");
     orgBluezDevice1 = QStringLiteral("org.bluez.Device1");
     orgBluezInput1 = QStringLiteral("org.bluez.Input1");
+    orgBluezGattManager1 = QStringLiteral("org.bluez.GattManager1");
     orgBluezLEAdvertisingManager1 = QStringLiteral("org.bluez.LEAdvertisingManager1");
     orgBluezMedia1 = QStringLiteral("org.bluez.Media1");
     orgBluezMediaPlayer1 = QStringLiteral("org.bluez.MediaPlayer1");
@@ -117,6 +119,11 @@ QString Strings::orgBluezDevice1()
 QString Strings::orgBluezInput1()
 {
     return globalData->orgBluezInput1;
+}
+
+QString Strings::orgBluezGattManager1()
+{
+    return globalData->orgBluezGattManager1;
 }
 
 QString Strings::orgBluezLEAdvertisingManager1()

@@ -233,6 +233,13 @@ public:
     QString modalias() const;
 
     /**
+     * Returns the GATT manager interface for the adapter.
+     *
+     * @return null if adapter have no GATT manager
+     */
+    GattManagerPtr gattManager() const;
+
+    /**
      * Returns the LE advertising manager interface for the adapter.
      *
      * @return null if adapter have no Bluetooth LE
@@ -357,6 +364,11 @@ Q_SIGNALS:
      * Indicates that adapter's modalias have changed.
      */
     void modaliasChanged(const QString &modalias);
+
+    /**
+     * Indicates that adapter's GATT manager have changed.
+     */
+    void gattManagerChanged(GattManagerPtr gattManager);
 
     /**
      * Indicates that adapter's LE advertising manager have changed.

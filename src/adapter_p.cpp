@@ -24,6 +24,7 @@
 #include "adapter.h"
 #include "utils.h"
 #include "macros.h"
+#include "gattmanager.h"
 #include "leadvertisingmanager.h"
 #include "leadvertisingmanager_p.h"
 #include "media.h"
@@ -79,6 +80,10 @@ void AdapterPrivate::interfacesAdded(const QString &path, const QVariantMapMap &
         } else if (it.key() == Strings::orgBluezLEAdvertisingManager1()) {
             m_leAdvertisingManager = LEAdvertisingManagerPtr(new LEAdvertisingManager(path));
             Q_EMIT q.data()->leAdvertisingManagerChanged(m_leAdvertisingManager);
+            changed = true;
+        } else if (it.key() == Strings::orgBluezGattManager1()) {
+            m_gattManager = GattManagerPtr(new GattManager(path));
+            Q_EMIT q.data()->gattManagerChanged(m_gattManager);
             changed = true;
         }
     }

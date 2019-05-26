@@ -20,19 +20,18 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#include "objectmanager.h"
 
 namespace BluezQt
 {
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+ObjectManager::ObjectManager(QObject *parent)
+    : QObject(parent)
 {
-    QString objectPath = QStringLiteral("/LEAdvertisements/");
-    if (!serviceUuids.isEmpty()) {
-        objectPath += QString(serviceUuids.front()).replace(QChar::fromLatin1('-'), QChar::fromLatin1('_'));
-    }
-    m_objectPath.setPath(objectPath);
+}
+
+ObjectManager::~ObjectManager()
+{
 }
 
 } // namespace BluezQt

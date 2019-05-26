@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,31 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#include "gattserviceadaptor.h"
+
+#include "gattservice.h"
+#include "request.h"
+
+#include <QDBusMessage>
+#include <QDBusObjectPath>
 
 namespace BluezQt
 {
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+GattServiceAdaptor::GattServiceAdaptor(GattService *parent)
+    : QDBusAbstractAdaptor(parent)
+    , m_gattService(parent)
 {
-    QString objectPath = QStringLiteral("/LEAdvertisements/");
-    if (!serviceUuids.isEmpty()) {
-        objectPath += QString(serviceUuids.front()).replace(QChar::fromLatin1('-'), QChar::fromLatin1('_'));
-    }
-    m_objectPath.setPath(objectPath);
+}
+
+QString GattServiceAdaptor::uuid() const
+{
+    return m_gattService->uuid();
+}
+
+bool GattServiceAdaptor::primary() const
+{
+    return m_gattService->isPrimary();
 }
 
 } // namespace BluezQt

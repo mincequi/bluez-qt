@@ -41,6 +41,7 @@ QString orgBluez();
 QString orgBluezAdapter1();
 QString orgBluezDevice1();
 QString orgBluezInput1();
+QString orgBluezGattManager1();
 QString orgBluezLEAdvertisingManager1();
 QString orgBluezMedia1();
 QString orgBluezMediaPlayer1();
