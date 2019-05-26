@@ -67,6 +67,8 @@ static PendingCall::Error nameToError(const QString &name)
     FROM_BLUEZ_ERROR("AuthenticationRejected", PendingCall::AuthenticationRejected);
     FROM_BLUEZ_ERROR("AuthenticationTimeout", PendingCall::AuthenticationTimeout);
     FROM_BLUEZ_ERROR("ConnectionAttemptFailed", PendingCall::ConnectionAttemptFailed);
+    FROM_BLUEZ_ERROR("InvalidLength", PendingCall::InvalidLength);
+    FROM_BLUEZ_ERROR("NotPermitted", PendingCall::NotPermitted);
 #undef FROM_BLUEZ_ERROR
 
     return PendingCall::UnknownError;
@@ -176,7 +178,8 @@ void PendingCallPrivate::processFileTransferListReply(const QDBusPendingReply<QV
     if (!reply.isError()) {
         QList<ObexFileTransferEntry> items;
         items.reserve(reply.value().size());
-        Q_FOREACH (const QVariantMap &map, reply.value()) {
+        const auto maps = reply.value();
+        for (const QVariantMap &map : maps) {
             items.append(ObexFileTransferEntry(map));
         }
         m_value.append(QVariant::fromValue(items));

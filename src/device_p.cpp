@@ -105,15 +105,14 @@ void DevicePrivate::interfacesAdded(const QString &path, const QVariantMapMap &i
 
 void DevicePrivate::interfacesRemoved(const QString &path, const QStringList &interfaces)
 {
-    Q_UNUSED(path)
     bool changed = false;
 
-    Q_FOREACH (const QString &interface, interfaces) {
-        if (interface == Strings::orgBluezInput1()) {
+    for (const QString &interface : interfaces) {
+        if (interface == Strings::orgBluezInput1() && m_input && m_input->d->m_path == path) {
             m_input.clear();
             Q_EMIT q.data()->inputChanged(m_input);
             changed = true;
-        } else if (interface == Strings::orgBluezMediaPlayer1()) {
+        } else if (interface == Strings::orgBluezMediaPlayer1() && m_mediaPlayer && m_mediaPlayer->d->m_path == path) {
             m_mediaPlayer.clear();
             Q_EMIT q.data()->mediaPlayerChanged(m_mediaPlayer);
             changed = true;
@@ -176,7 +175,7 @@ void DevicePrivate::propertiesChanged(const QString &interface, const QVariantMa
         }
     }
 
-    Q_FOREACH (const QString &property, invalidated) {
+    for (const QString &property : invalidated) {
         if (property == QLatin1String("Name")) {
             namePropertyChanged(QString());
         } else if (property == QLatin1String("Class")) {

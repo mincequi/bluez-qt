@@ -24,8 +24,8 @@
 #include "initmanagerjob.h"
 #include "services.h"
 
-#include <QtTest/QTest>
-#include <QtTest/QSignalSpy>
+#include <QTest>
+#include <QSignalSpy>
 
 namespace BluezQt
 {
@@ -132,7 +132,7 @@ void MediaPlayerTest::initTestCase()
 
 void MediaPlayerTest::cleanupTestCase()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         delete unit.dbusMediaPlayer;
         delete unit.dbusProperties;
     }
@@ -144,7 +144,7 @@ void MediaPlayerTest::cleanupTestCase()
 
 void MediaPlayerTest::connectTest()
 {
-    Q_FOREACH (DevicePtr device, m_manager->devices()) {
+    for (DevicePtr device : m_manager->devices()) {
         QVERIFY(!device->ubi().isEmpty());
         QVERIFY(!device->mediaPlayer());
 
@@ -158,7 +158,7 @@ void MediaPlayerTest::connectTest()
 
 void MediaPlayerTest::disconnectTest()
 {
-    Q_FOREACH (DevicePtr device, m_manager->devices()) {
+    for (DevicePtr device : m_manager->devices()) {
         QVERIFY(device->mediaPlayer());
 
         QSignalSpy deviceSpy(device.data(), SIGNAL(mediaPlayerChanged(MediaPlayerPtr)));
@@ -174,7 +174,7 @@ void MediaPlayerTest::connectProfileTest()
     QDBusConnection connection = QDBusConnection::sessionBus();
     QString service = QStringLiteral("org.kde.bluezqt.fakebluez");
 
-    Q_FOREACH (DevicePtr device, m_manager->devices()) {
+    for (DevicePtr device : m_manager->devices()) {
         QVERIFY(!device->ubi().isEmpty());
         QVERIFY(!device->mediaPlayer());
 
@@ -196,7 +196,7 @@ void MediaPlayerTest::connectProfileTest()
 
 void MediaPlayerTest::getPropertiesTest()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         QCOMPARE(unit.device->mediaPlayer()->name(), unit.dbusMediaPlayer->name());
         QCOMPARE(equalizerString(unit.device->mediaPlayer()), unit.dbusMediaPlayer->equalizer());
         QCOMPARE(repeatString(unit.device->mediaPlayer()), unit.dbusMediaPlayer->repeat());
@@ -209,7 +209,7 @@ void MediaPlayerTest::getPropertiesTest()
 
 void MediaPlayerTest::setEqualizerTest()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         MediaPlayerPtr mediaPlayer = unit.device->mediaPlayer();
         MediaPlayer::Equalizer value = mediaPlayer->equalizer() == MediaPlayer::EqualizerOff ?
                     MediaPlayer::EqualizerOn : MediaPlayer::EqualizerOff;
@@ -225,7 +225,7 @@ void MediaPlayerTest::setEqualizerTest()
 
 void MediaPlayerTest::setRepeatTest()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         MediaPlayerPtr mediaPlayer = unit.device->mediaPlayer();
         MediaPlayer::Repeat value = mediaPlayer->repeat() == MediaPlayer::RepeatGroup ?
                     MediaPlayer::RepeatSingleTrack : MediaPlayer::RepeatGroup;
@@ -241,7 +241,7 @@ void MediaPlayerTest::setRepeatTest()
 
 void MediaPlayerTest::setShuffleTest()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         MediaPlayerPtr mediaPlayer = unit.device->mediaPlayer();
         MediaPlayer::Shuffle value = mediaPlayer->shuffle() == MediaPlayer::ShuffleAllTracks ?
                     MediaPlayer::ShuffleOff : MediaPlayer::ShuffleAllTracks;
@@ -257,7 +257,7 @@ void MediaPlayerTest::setShuffleTest()
 
 void MediaPlayerTest::changeStatusTest()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         MediaPlayerPtr mediaPlayer = unit.device->mediaPlayer();
 
         QSignalSpy statusSpy(mediaPlayer.data(), SIGNAL(statusChanged(Status)));
@@ -303,7 +303,7 @@ void MediaPlayerTest::changeStatusTest()
 
 void MediaPlayerTest::changeTrackTest()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         MediaPlayerPtr mediaPlayer = unit.device->mediaPlayer();
 
         QSignalSpy trackSpy(mediaPlayer.data(), SIGNAL(trackChanged(MediaPlayerTrack)));
@@ -322,7 +322,7 @@ void MediaPlayerTest::changeTrackTest()
 
 void MediaPlayerTest::disconnectProfileTest()
 {
-    Q_FOREACH (const MediaPlayerUnit &unit, m_units) {
+    for (const MediaPlayerUnit &unit : m_units) {
         QVERIFY(unit.device->mediaPlayer());
 
         QSignalSpy deviceSpy(unit.device.data(), SIGNAL(mediaPlayerChanged(MediaPlayerPtr)));
@@ -330,6 +330,33 @@ void MediaPlayerTest::disconnectProfileTest()
         unit.device->disconnectProfile(Services::AudioVideoRemoteControl);
         QTRY_COMPARE(deviceSpy.count(), 1);
         QVERIFY(!unit.device->mediaPlayer());
+    }
+}
+
+void MediaPlayerTest::bug403289()
+{
+    // Bug 403289: MediaPlayer interface path is not checked in InterfacesRemoved signal
+
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    QString service = QStringLiteral("org.kde.bluezqt.fakebluez");
+
+    for (DevicePtr device : m_manager->devices()) {
+        QVERIFY(!device->mediaPlayer());
+
+        QSignalSpy deviceSpy(device.data(), SIGNAL(mediaPlayerChanged(MediaPlayerPtr)));
+
+        const QVariantMap props = {
+            { QStringLiteral("DevicePath"), QVariant::fromValue(QDBusObjectPath(device->ubi())) }
+        };
+        FakeBluez::runAction(QStringLiteral("devicemanager"), QStringLiteral("bug403289"), props);
+
+        QTRY_COMPARE(deviceSpy.count(), 1);
+        QVERIFY(deviceSpy.at(0).at(0).value<MediaPlayerPtr>());
+        QTest::qWait(100);
+        QCOMPARE(deviceSpy.count(), 1);
+        device->disconnectProfile(Services::AudioVideoRemoteControl);
+        QTRY_COMPARE(deviceSpy.count(), 2);
+        QVERIFY(!deviceSpy.at(1).at(0).value<MediaPlayerPtr>());
     }
 }
 

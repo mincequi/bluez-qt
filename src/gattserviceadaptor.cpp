@@ -1,4 +1,6 @@
 /*
+ * BluezQt - Asynchronous Bluez wrapper library
+ *
  * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,38 +20,31 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MEDIA_H
-#define MEDIA_H
+#include "gattserviceadaptor.h"
 
-#include "object.h"
+#include "gattservice.h"
+#include "request.h"
 
-#include <QDBusAbstractAdaptor>
+#include <QDBusMessage>
+#include <QDBusObjectPath>
 
-class QDBusMessage;
-
-class Media : public QDBusAbstractAdaptor, public Object
+namespace BluezQt
 {
-    Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.bluez.Media1")
 
-public:
-    explicit Media(QObject *parent = nullptr);
+GattServiceAdaptor::GattServiceAdaptor(GattService *parent)
+    : QDBusAbstractAdaptor(parent)
+    , m_gattService(parent)
+{
+}
 
-    void runAction(const QString &actionName, const QVariantMap &properties);
+QString GattServiceAdaptor::uuid() const
+{
+    return m_gattService->uuid();
+}
 
-public Q_SLOTS:
-    void RegisterEndpoint(const QDBusObjectPath &path, const QVariantMap &properties, const QDBusMessage &msg);
-    void UnregisterEndpoint(const QDBusObjectPath &path, const QDBusMessage &msg);
+bool GattServiceAdaptor::primary() const
+{
+    return m_gattService->isPrimary();
+}
 
-private:
-    void runSetConfigurationAction(const QVariantMap &properties);
-    void runSelectConfigurationAction(const QVariantMap &properties);
-    void runClearConfigurationAction(const QVariantMap &properties);
-    void runReleaseAction();
-
-    QDBusObjectPath m_endpoint;
-    QString m_service;
-    QVariantMap m_properties;
-};
-
-#endif // MEDIA_H
+} // namespace BluezQt

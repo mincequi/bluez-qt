@@ -41,7 +41,9 @@ private:
     void runRemoveDeviceAction(const QVariantMap &properties);
     void runChangeAdapterProperty(const QVariantMap &properties);
     void runChangeDeviceProperty(const QVariantMap &properties);
+    void runAdapterMediaAction(const QString action, const QVariantMap &properties);
     void runBug377405();
+    void runBug403289(const QVariantMap &properties);
 
     ObjectManager *m_objectManager;
 

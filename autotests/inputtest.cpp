@@ -23,8 +23,8 @@
 #include "pendingcall.h"
 #include "initmanagerjob.h"
 
-#include <QtTest/QTest>
-#include <QtTest/QSignalSpy>
+#include <QTest>
+#include <QSignalSpy>
 
 namespace BluezQt
 {
@@ -110,7 +110,7 @@ void InputTest::initTestCase()
     initJob->exec();
     QVERIFY(!initJob->error());
 
-    Q_FOREACH (DevicePtr device, m_manager->devices()) {
+    for (DevicePtr device : m_manager->devices()) {
         QVERIFY(device->input());
 
         InputUnit u;
@@ -128,7 +128,7 @@ void InputTest::initTestCase()
 
 void InputTest::cleanupTestCase()
 {
-    Q_FOREACH (const InputUnit &unit, m_units) {
+    for (const InputUnit &unit : m_units) {
         delete unit.dbusInput;
     }
 
@@ -139,7 +139,7 @@ void InputTest::cleanupTestCase()
 
 void InputTest::getPropertiesTest()
 {
-    Q_FOREACH (const InputUnit &unit, m_units) {
+    for (const InputUnit &unit : m_units) {
         QCOMPARE(reconnectModeString(unit.device->input()), unit.dbusInput->reconnectMode());
     }
 }

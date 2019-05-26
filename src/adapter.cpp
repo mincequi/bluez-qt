@@ -146,6 +146,21 @@ QString Adapter::modalias() const
     return d->m_modalias;
 }
 
+GattManagerPtr Adapter::gattManager() const
+{
+    return d->m_gattManager;
+}
+
+LEAdvertisingManagerPtr Adapter::leAdvertisingManager() const
+{
+    return d->m_leAdvertisingManager;
+}
+
+MediaPtr Adapter::media() const
+{
+    return d->m_media;
+}
+
 QList<DevicePtr> Adapter::devices() const
 {
     return d->m_devices;
@@ -153,7 +168,7 @@ QList<DevicePtr> Adapter::devices() const
 
 DevicePtr Adapter::deviceForAddress(const QString &address) const
 {
-    Q_FOREACH (DevicePtr device, d->m_devices) {
+    for (DevicePtr device : qAsConst(d->m_devices)) {
         if (device->address() == address) {
             return device;
         }
