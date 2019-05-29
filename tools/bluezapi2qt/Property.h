@@ -38,10 +38,10 @@ public:
 
     bool finalize();
 
-    const QString&      name() const;
-    const QString&      type() const;
-    const Tags&         tags() const;
-    const QStringList&  comment() const;
+    QString      name() const;
+    QString      type() const;
+    Tags         tags() const;
+    QStringList  comment() const;
 
 private:
     QString     m_name;

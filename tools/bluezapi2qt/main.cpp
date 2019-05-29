@@ -39,24 +39,34 @@ int main(int argc, char *argv[])
 
     // Add command line parsing
     QCommandLineParser parser;
-    parser.setApplicationDescription("Generates D-BUS object introspection XML files out of BlueZ D-Bus API\n"
-                                     "description files (*-api.txt).");
+    parser.setApplicationDescription(QStringLiteral("Generates D-BUS object introspection XML files out of BlueZ D-Bus API\n"
+                                                    "description files (*-api.txt)."));
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument("<bluez>-api.txt", "BlueZ D-Bus API description file to use.");
-    QCommandLineOption deprecatedOption(QStringList() << "d" << "deprecated", "Generate deprecated methods/properties");
+    parser.addPositionalArgument(QStringLiteral("<bluez>-api.txt"),
+                                 QStringLiteral("BlueZ D-Bus API description file to use."));
+    QCommandLineOption deprecatedOption(QStringList() <<
+                                        QStringLiteral("d") << QStringLiteral("deprecated"),
+                                        QStringLiteral("Generate deprecated methods/properties"));
     parser.addOption(deprecatedOption);
-    QCommandLineOption experimentalOption(QStringList() << "e" << "experimental", "Generate experimental methods/properties");
+    QCommandLineOption experimentalOption(QStringList() <<
+                                          QStringLiteral("e") << QStringLiteral("experimental"),
+                                          QStringLiteral("Generate experimental methods/properties"));
     parser.addOption(experimentalOption);
-    QCommandLineOption optionalOption(QStringList() << "o" << "optional", "Generate optional methods/properties");
+    QCommandLineOption optionalOption(QStringList() << QStringLiteral("o") << QStringLiteral("optional"),
+                                      QStringLiteral("Generate optional methods/properties"));
     parser.addOption(optionalOption);
-    QCommandLineOption xmlOption(QStringList() << "x" << "xml", "Generate D-Bus object introspection XML files");
+    QCommandLineOption xmlOption(QStringList() << QStringLiteral("x") << QStringLiteral("xml"),
+                                 QStringLiteral("Generate D-Bus object introspection XML files"));
     parser.addOption(xmlOption);
-    QCommandLineOption cppOption(QStringList() << "c" << "cpp", "Generate D-Bus interface adaptor C++ files");
+    QCommandLineOption cppOption(QStringList() << QStringLiteral("c") << QStringLiteral("cpp"),
+                                 QStringLiteral("Generate D-Bus interface adaptor C++ files"));
     parser.addOption(cppOption);
-    QCommandLineOption authorOption(QStringList() << "a" << "author",  "Author for copyright header in C++ files", "author");
+    QCommandLineOption authorOption(QStringList() << QStringLiteral("a") << QStringLiteral("author"),
+                                    QStringLiteral("Author for copyright header in C++ files"), QStringLiteral("author"));
     parser.addOption(authorOption);
-    QCommandLineOption yearOption(QStringList() << "y" << "year",  "Year for copyright header in C++ files", "year");
+    QCommandLineOption yearOption(QStringList() << QStringLiteral("y") << QStringLiteral("year"),
+                                  QStringLiteral("Year for copyright header in C++ files"), QStringLiteral("year"));
     parser.addOption(yearOption);
     parser.process(a);
 

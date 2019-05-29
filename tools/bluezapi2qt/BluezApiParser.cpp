@@ -62,7 +62,7 @@ bool BluezApiParser::finalize()
     return success;
 }
 
-const std::list<Interface> &BluezApiParser::interfaces() const
+std::list<Interface> BluezApiParser::interfaces() const
 {
     return m_interfaces;
 }

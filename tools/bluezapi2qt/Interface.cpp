@@ -77,31 +77,31 @@ bool Interface::finalize()
     return success;
 }
 
-const QStringList &Interface::comment() const
+QStringList Interface::comment() const
 {
     return m_comment;
 }
-const QString &Interface::service() const
+QString Interface::service() const
 {
     return m_service;
 }
 
-const QString &Interface::name() const
+QString Interface::name() const
 {
     return m_name;
 }
 
-const QString &Interface::objectPath() const
+QString Interface::objectPath() const
 {
     return m_objectPath;
 }
 
-const Methods &Interface::methods() const
+Methods Interface::methods() const
 {
     return m_methods;
 }
 
-const Properties &Interface::properties() const
+Properties Interface::properties() const
 {
     return m_properties;
 }

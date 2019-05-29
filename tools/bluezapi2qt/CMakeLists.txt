@@ -1,7 +1,3 @@
-remove_definitions(
-    -DQT_NO_CAST_FROM_ASCII
-)
-
 add_executable(bluezapi2qt
     BluezApiParser.cpp
     Comment.cpp

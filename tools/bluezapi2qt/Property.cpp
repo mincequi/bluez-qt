@@ -28,7 +28,7 @@ Property::Property()
 
 bool Property::finalize()
 {
-    for (const auto &tag : m_stringTags) {
+    for (auto tag : m_stringTags) {
         m_tags.isOptional |= tag.contains(QStringLiteral("optional"), Qt::CaseInsensitive);
         m_tags.isExperimental |= tag.contains(QStringLiteral("experimental"), Qt::CaseInsensitive);
         m_tags.isReadOnly |= tag.contains(QStringLiteral("read-only"), Qt::CaseInsensitive);
@@ -41,22 +41,22 @@ bool Property::finalize()
     return success;
 }
 
-const QString& Property::name() const
+QString Property::name() const
 {
     return m_name;
 }
 
-const QString& Property::type() const
+QString Property::type() const
 {
     return m_type;
 }
 
-const Property::Tags& Property::tags() const
+Property::Tags Property::tags() const
 {
     return m_tags;
 }
 
-const QStringList& Property::comment() const
+QStringList Property::comment() const
 {
     return m_comment;
 }
