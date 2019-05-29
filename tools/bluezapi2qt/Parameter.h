@@ -29,8 +29,8 @@ class Parameter
 public:
     static Parameter fromString(const QString &string);
 
-    const QString &type() const;
-    const QString &name() const;
+    QString type() const;
+    QString name() const;
 
 private:
     QString m_type;

@@ -35,7 +35,7 @@ public:
     bool parse(QTextStream &stream);
     bool finalize();
 
-    const std::list<Interface> &interfaces() const;
+    std::list<Interface> interfaces() const;
 
 private:
     std::list<Interface> m_interfaces;

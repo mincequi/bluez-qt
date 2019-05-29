@@ -34,12 +34,12 @@ public:
     bool    parse(const QString &line);
     bool    finalize();
 
-    const QStringList &comment() const;
-    const QString     &service() const;
-    const QString     &name() const;
-    const QString     &objectPath() const;
-    const Methods     &methods() const;
-    const Properties  &properties() const;
+    QStringList comment() const;
+    QString     service() const;
+    QString     name() const;
+    QString     objectPath() const;
+    Methods     methods() const;
+    Properties  properties() const;
 
 private:
     enum class State {

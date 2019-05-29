@@ -85,7 +85,7 @@ bool Methods::finalize()
 }
 
 
-const std::list<Method>& Methods::methods() const
+std::list<Method> Methods::methods() const
 {
     return m_methods;
 }

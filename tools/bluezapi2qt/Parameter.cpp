@@ -36,12 +36,12 @@ Parameter Parameter::fromString(const QString &string)
     return param;
 }
 
-const QString &Parameter::type() const
+QString Parameter::type() const
 {
     return m_type;
 }
 
-const QString &Parameter::name() const
+QString Parameter::name() const
 {
     return m_name;
 }

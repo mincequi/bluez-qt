@@ -33,11 +33,11 @@ public:
     void parse(const QString &line);
     bool finalize();
 
-    const std::list<Property>&    properties() const;
+    std::list<Property> properties() const;
 
 private:
-    std::list<Property>   m_properties;
-    Property*             m_currentProperty = nullptr;
+    std::list<Property> m_properties;
+    Property *m_currentProperty = nullptr;
 };
 
 #endif // PROPERTIES_H

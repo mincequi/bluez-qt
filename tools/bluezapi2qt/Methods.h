@@ -35,11 +35,11 @@ public:
     void parse(const QString &line);
     bool finalize();
 
-    const std::list<Method> &methods() const;
+    std::list<Method> methods() const;
 
 private:
-    std::list<Method>   m_methods;
-    Method             *m_currentMethod = nullptr;
+    std::list<Method> m_methods;
+    Method *m_currentMethod = nullptr;
 };
 
 #endif // METHODS_H

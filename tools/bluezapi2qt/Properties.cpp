@@ -71,7 +71,7 @@ bool Properties::finalize()
 }
 
 
-const std::list<Property> &Properties::properties() const
+std::list<Property> Properties::properties() const
 {
     return m_properties;
 }
