@@ -20,8 +20,18 @@
 
 #pragma once
 
+#include "gattapplication.h"
 #include "gattcharacteristic.h"
 #include "adapter.h"
+
+class TestApplication : public BluezQt::GattApplication
+{
+public:
+    using BluezQt::GattApplication::GattApplication;
+    DBusManagerStruct getManagedObjects() const override;
+
+    mutable bool m_getObjectsCalled = false;
+};
 
 class GattManagerTest : public QObject
 {
@@ -31,10 +41,12 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    void getObjectsTest();
     void readCharcTest();
     void writeCharcTest();
 
 private:
-    BluezQt::GattCharacteristic *m_charc;
+    TestApplication             *m_application;
+    BluezQt::GattCharacteristic *m_characteristic;
     BluezQt::AdapterPtr m_adapter;
 };

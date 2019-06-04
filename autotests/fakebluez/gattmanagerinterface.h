@@ -41,10 +41,12 @@ public Q_SLOTS:
     void UnregisterApplication(const QDBusObjectPath &path, const QDBusMessage &msg);
 
 private:
+    void runGetObjectsAction(const QVariantMap &properties);
     void runReadCharcAction(const QVariantMap &properties);
     void runWriteCharcAction(const QVariantMap &properties);
 
     QDBusObjectPath m_application;
+    QDBusObjectPath m_characteristic;
     QString m_service;
     QVariantMap m_properties;
 };

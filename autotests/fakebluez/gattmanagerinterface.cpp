@@ -19,11 +19,13 @@
  */
 
 #include "gattmanagerinterface.h"
+#include "objectmanager.h"
 
 #include <QDebug>
 #include <QDBusMessage>
 #include <QDBusConnection>
 #include <QDBusPendingCall>
+#include <QDBusPendingReply>
 
 GattManagerInterface::GattManagerInterface(const QDBusObjectPath &path, QObject *parent)
     : QDBusAbstractAdaptor(parent)
@@ -34,7 +36,9 @@ GattManagerInterface::GattManagerInterface(const QDBusObjectPath &path, QObject 
 
 void GattManagerInterface::runAction(const QString &actionName, const QVariantMap &properties)
 {
-    if (actionName == QLatin1String("read-charc")) {
+    if (actionName == QLatin1String("get-objects")) {
+        runGetObjectsAction(properties);
+    } else if (actionName == QLatin1String("read-charc")) {
         runReadCharcAction(properties);
     } else if (actionName == QLatin1String("write-charc")) {
         runWriteCharcAction(properties);
@@ -55,10 +59,35 @@ void GattManagerInterface::UnregisterApplication(const QDBusObjectPath &path, co
     }
 }
 
-void GattManagerInterface::runReadCharcAction(const QVariantMap &properties)
+void GattManagerInterface::runGetObjectsAction(const QVariantMap &properties)
 {
     QDBusMessage call = QDBusMessage::createMethodCall(m_service,
                                                        m_application.path(),
+                                                       QStringLiteral("org.freedesktop.DBus.ObjectManager"),
+                                                       QStringLiteral("GetManagedObjects"));
+
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(call));
+    connect(watcher, &QDBusPendingCallWatcher::finished, [this](QDBusPendingCallWatcher *watcher) {
+        const QDBusPendingReply<DBusManagerStruct> &reply = *watcher;
+        watcher->deleteLater();
+        if (reply.isError()) {
+            return;
+        }
+
+        DBusManagerStruct objects = reply.value();
+        for (const auto& object : objects.keys()) {
+            if (object.path().contains(QStringLiteral("char"))) {
+                m_characteristic = object;
+                break;
+            }
+        }
+    });
+}
+
+void GattManagerInterface::runReadCharcAction(const QVariantMap &properties)
+{
+    QDBusMessage call = QDBusMessage::createMethodCall(m_service,
+                                                       m_characteristic.path(),
                                                        QStringLiteral("org.bluez.GattCharacteristic1"),
                                                        QStringLiteral("ReadValue"));
     call << properties.value(QStringLiteral("Options"));
@@ -68,7 +97,7 @@ void GattManagerInterface::runReadCharcAction(const QVariantMap &properties)
 void GattManagerInterface::runWriteCharcAction(const QVariantMap &properties)
 {
     QDBusMessage call = QDBusMessage::createMethodCall(m_service,
-                                                       m_application.path(),
+                                                       m_characteristic.path(),
                                                        QStringLiteral("org.bluez.GattCharacteristic1"),
                                                        QStringLiteral("WriteValue"));
     call << properties.value(QStringLiteral("Value"));

@@ -63,9 +63,9 @@ protected:
      */
     virtual QDBusObjectPath objectPath() const;
 
-private:
     DBusManagerStruct getManagedObjects() const override;
 
+private:
     class GattApplicationPrivate *const d;
 
     friend class GattManager;
