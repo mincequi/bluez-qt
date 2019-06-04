@@ -22,36 +22,35 @@
 
 #include "gattservice.h"
 #include "gattapplication.h"
+#include "gattservice_p.h"
 
 namespace BluezQt
 {
 
 GattService::GattService(const QString &uuid, bool isPrimary, GattApplication *parent)
     : QObject(parent),
-      m_uuid(uuid),
-      m_isPrimary(isPrimary)
+      d(new GattServicePrivate(uuid, isPrimary, parent->objectPath().path()))
 {
-    static uint8_t serviceNumber = 0;
-    m_objectPath.setPath(parent->objectPath().path() + QStringLiteral("/service") + QString::number(serviceNumber++));
 }
 
 GattService::~GattService()
 {
+    delete d;
 }
 
 QString GattService::uuid() const
 {
-    return m_uuid;
+    return d->m_uuid;
 }
 
 bool GattService::isPrimary() const
 {
-    return m_isPrimary;
+    return d->m_isPrimary;
 }
 
 QDBusObjectPath GattService::objectPath() const
 {
-    return m_objectPath;
+    return d->m_objectPath;
 }
 
 } // namespace BluezQt

@@ -1,6 +1,4 @@
 /*
- * BluezQt - Asynchronous Bluez wrapper library
- *
  * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,17 +18,34 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#pragma once
 
-namespace BluezQt
+#include "leadvertisement.h"
+#include "adapter.h"
+
+class TestAdvertisement : public BluezQt::LEAdvertisement
 {
+    Q_OBJECT
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+public:
+    using BluezQt::LEAdvertisement::LEAdvertisement;
+    void release() override;
+
+    // release
+    bool m_releaseCalled = false;
+};
+
+class LEAdvertisingManagerTest : public QObject
 {
-    static uint8_t advNumber = 0;
-    QString objectPath = QStringLiteral("/org/bluez/leadv") + QString::number(advNumber++);
-    m_objectPath.setPath(objectPath);
-}
+    Q_OBJECT
 
-} // namespace BluezQt
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+
+    void releaseTest();
+
+private:
+    TestAdvertisement* m_advertisement;
+    BluezQt::AdapterPtr m_adapter;
+};

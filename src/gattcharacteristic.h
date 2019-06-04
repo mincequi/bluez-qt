@@ -58,18 +58,11 @@ public:
     void writeValue(const QByteArray &value);
 
     /**
-     * Provide a read function to operate in *pull* mode.
+     * Provide a read callback to operate in *pull* mode.
      */
     using ReadCallback = std::function<QByteArray()>;
     void setReadCallback(ReadCallback callback);
 
-Q_SIGNALS:
-    /**
-     * Indicates that a value was written.
-     */
-    void valueWritten(const QByteArray &value);
-
-private:
     /**
      * 128-bit GATT characteristic UUID.
      *
@@ -78,18 +71,32 @@ private:
     QString uuid() const;
 
     /**
-     * Object path of the GATT service the characteristic belongs to.
+     * The GATT service the characteristic belongs to.
      *
-     * @return object path of service this characteristic belongs to
+     * @return service this characteristic belongs to
      */
-    QDBusObjectPath serviceObjectPath() const;
+    const GattService *service() const;
+
+Q_SIGNALS:
+    /**
+     * Indicates that a value was written.
+     */
+    void valueWritten(const QByteArray &value);
+
+protected:
+    /**
+     * D-Bus object path of the GattCharacteristic.
+     *
+     * The path where the GattCharacteristic will be registered.
+     *
+     * @note You must provide valid object path!
+     *
+     * @return object path of GattCharacteristic
+     */
     virtual QDBusObjectPath objectPath() const;
 
-    QString m_uuid;
-    const GattService *m_service;
-    QDBusObjectPath m_objectPath;
-    QByteArray      m_value;
-    ReadCallback    m_readCallback = nullptr;
+private:
+    class GattCharacterisiticPrivate *const d;
 
     friend class GattApplication;
     friend class GattCharacteristicAdaptor;

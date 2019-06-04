@@ -1,7 +1,7 @@
 /*
- * BluezQt - Asynchronous Bluez wrapper library
+ * BluezQt - Asynchronous BlueZ wrapper library
  *
- * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,17 +20,24 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#pragma once
+
+#include "gattcharacteristic.h"
 
 namespace BluezQt
 {
+class GattServicePrivate;
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
+class GattCharacterisiticPrivate
 {
-    static uint8_t advNumber = 0;
-    QString objectPath = QStringLiteral("/org/bluez/leadv") + QString::number(advNumber++);
-    m_objectPath.setPath(objectPath);
-}
+public:
+    GattCharacterisiticPrivate(const QString &uuid, const GattService *service);
+
+    QString m_uuid;
+    const GattService *m_service;
+    QDBusObjectPath m_objectPath;
+    QByteArray      m_value;
+    GattCharacteristic::ReadCallback m_readCallback = nullptr;
+};
 
 } // namespace BluezQt

@@ -47,7 +47,7 @@ LeServer::LeServer(Manager *manager, QObject *parent)
 
     auto application = new GattApplication(this);
     auto service = new GattService(QStringLiteral("ad100000-d901-11e8-9f8b-f2801f1b9fd1"), true, application);
-    auto charc = new GattCharacteristic(QStringLiteral("ad10e100-d901-11e8-9f8b-f2801f1b9fd1"), service);
+    new GattCharacteristic(QStringLiteral("ad10e100-d901-11e8-9f8b-f2801f1b9fd1"), service);
     auto call2 = m_manager->usableAdapter()->gattManager()->registerApplication(application);
     connect(call2, &PendingCall::finished, this, &LeServer::onCallFinished);
 }

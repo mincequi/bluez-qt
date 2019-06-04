@@ -7,10 +7,13 @@ set(bluezqt_SRCS
     device.cpp
     device_p.cpp
     gattapplication.cpp
+    gattapplication_p.cpp
     gattcharacteristic.cpp
+    gattcharacteristic_p.cpp
     gattcharacteristicadaptor.cpp
     gattmanager.cpp
     gattservice.cpp
+    gattservice_p.cpp
     gattserviceadaptor.cpp
     input.cpp
     leadvertisement.cpp

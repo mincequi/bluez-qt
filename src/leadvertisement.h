@@ -57,6 +57,24 @@ public:
     ~LEAdvertisement();
 
     /**
+     * List of UUIDs to include in the "Service UUID" field of the Advertising Data.
+     *
+     * @return UUIDs of the advertisement
+     */
+    virtual QStringList serviceUuids() const;
+
+    /**
+     * Indicates that the LEAdvertisement was unregistered.
+     *
+     * This method gets called when the service daemon removes the Advertisement.
+     * A client can use it to do cleanup tasks. There is no need to call
+     * UnregisterAdvertisement because when this method gets called it has
+     * already been unregistered.
+     */
+    virtual void release();
+
+protected:
+    /**
      * D-Bus object path of the advertisement.
      *
      * The path where the advertisement will be registered.
@@ -67,25 +85,10 @@ public:
      */
     virtual QDBusObjectPath objectPath() const;
 
-    /**
-     * List of UUIDs to include in the "Service UUID" field of the Advertising Data.
-     *
-     * @return UUIDs of the advertisement
-     */
-    virtual QStringList serviceUuids() const;
-
-    /**
-     * Indicates that the MediaEndpoint was unregistered.
-     *
-     * This method gets called when the service daemon removes the Advertisement.
-     * A client can use it to do cleanup tasks. There is no need to call
-     * UnregisterAdvertisement because when this method gets called it has
-     * already been unregistered.
-     */
-    virtual void release();
-
 private:
     class LEAdvertisementPrivate *const d;
+
+    friend class LEAdvertisingManager;
 };
 
 } // namespace BluezQt

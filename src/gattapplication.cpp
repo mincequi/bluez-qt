@@ -22,26 +22,28 @@
 
 #include "gattapplication.h"
 
-#include <QDBusObjectPath>
-#include <QDebug>
-#include <QMetaClassInfo>
-
+#include "gattapplication_p.h"
 #include "gattcharacteristic.h"
 #include "gattcharacteristicadaptor.h"
 #include "gattservice.h"
 #include "gattserviceadaptor.h"
 
+#include <QDBusObjectPath>
+#include <QDebug>
+#include <QMetaClassInfo>
+
 namespace BluezQt
 {
 
 GattApplication::GattApplication(QObject *parent) :
-    ObjectManager(parent)
+    ObjectManager(parent),
+    d(new GattApplicationPrivate())
 {
-    m_objectPath.setPath(QStringLiteral("/org/bluez"));
 }
 
 GattApplication::~GattApplication()
 {
+    delete d;
 }
 
 DBusManagerStruct GattApplication::getManagedObjects() const
@@ -84,7 +86,7 @@ DBusManagerStruct GattApplication::getManagedObjects() const
 
 QDBusObjectPath GattApplication::objectPath() const
 {
-    return m_objectPath;
+    return d->m_objectPath;
 }
 
 } // namespace BluezQt

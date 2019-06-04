@@ -82,14 +82,10 @@ protected:
     virtual QDBusObjectPath objectPath() const;
 
 private:
-    //class GattServicePrivate *const d;
-
-    QString m_uuid;
-    bool    m_isPrimary;
-    QDBusObjectPath m_objectPath;
+    class GattServicePrivate *const d;
 
     friend class GattApplication;
-    friend class GattCharacteristic;
+    friend class GattCharacterisiticPrivate;
     friend class GattCharacteristicAdaptor;
     friend class GattManager;
 };

@@ -1,6 +1,4 @@
 /*
- * BluezQt - Asynchronous Bluez wrapper library
- *
  * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,17 +18,31 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "leadvertisement_p.h"
+#pragma once
 
-namespace BluezQt
+#include "object.h"
+
+#include <QDBusAbstractAdaptor>
+
+class QDBusMessage;
+
+class LEAdvertisingManagerInterface : public QDBusAbstractAdaptor, public Object
 {
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.bluez.LEAdvertisingManager1")
 
-LEAdvertisementPrivate::LEAdvertisementPrivate(const QStringList &serviceUuids)
-    : m_serviceUuids(serviceUuids)
-{
-    static uint8_t advNumber = 0;
-    QString objectPath = QStringLiteral("/org/bluez/leadv") + QString::number(advNumber++);
-    m_objectPath.setPath(objectPath);
-}
+public:
+    explicit LEAdvertisingManagerInterface(const QDBusObjectPath &path, QObject *parent = nullptr);
 
-} // namespace BluezQt
+    void runAction(const QString &actionName, const QVariantMap &properties);
+
+public Q_SLOTS:
+    void RegisterAdvertisement(const QDBusObjectPath &path, const QVariantMap &options, const QDBusMessage &msg);
+    void UnregisterAdvertisement(const QDBusObjectPath &path, const QDBusMessage &msg);
+
+private:
+    void runReleaseAction();
+
+    QDBusObjectPath m_advertisement;
+    QString m_service;
+};

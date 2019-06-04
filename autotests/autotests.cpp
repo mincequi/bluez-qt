@@ -62,7 +62,7 @@ private:
 
 StartJob::StartJob()
     : QObject(nullptr)
-    , m_fakebluezPath(QCoreApplication::applicationDirPath() + QStringLiteral("/fakebluez"))
+    , m_fakebluezPath(QCoreApplication::applicationDirPath() + QStringLiteral("/fakebluez/fakebluez"))
 {
 }
 

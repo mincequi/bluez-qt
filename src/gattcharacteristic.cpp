@@ -21,6 +21,7 @@
  */
 
 #include "gattcharacteristic.h"
+#include "gattcharacteristic_p.h"
 #include "gattservice.h"
 
 namespace BluezQt
@@ -28,50 +29,48 @@ namespace BluezQt
 
 GattCharacteristic::GattCharacteristic(const QString &uuid, GattService *service)
     : QObject(service),
-      m_uuid(uuid),
-      m_service(service)
+      d(new GattCharacterisiticPrivate(uuid, service))
 {
-    static uint8_t charcNumber = 0;
-    m_objectPath.setPath(m_service->objectPath().path() + QStringLiteral("/char") + QString::number(charcNumber++));
 }
 
 GattCharacteristic::~GattCharacteristic()
 {
+    delete d;
 }
 
 QByteArray GattCharacteristic::readValue()
 {
-    if (m_readCallback) {
-        m_value = m_readCallback();
+    if (d->m_readCallback) {
+        d->m_value = d->m_readCallback();
     }
 
-    return m_value;
+    return d->m_value;
 }
 
 void GattCharacteristic::writeValue(const QByteArray& value)
 {
-    m_value = value;
-    emit valueWritten(m_value);
+    d->m_value = value;
+    emit valueWritten(d->m_value);
 }
 
 QString GattCharacteristic::uuid() const
 {
-    return m_uuid;
+    return d->m_uuid;
 }
 
-QDBusObjectPath GattCharacteristic::serviceObjectPath() const
+const GattService *GattCharacteristic::service() const
 {
-    return m_service->objectPath();
+    return d->m_service;
 }
 
 QDBusObjectPath GattCharacteristic::objectPath() const
 {
-    return m_objectPath;
+    return d->m_objectPath;
 }
 
 void GattCharacteristic::setReadCallback(ReadCallback callback)
 {
-    m_readCallback = callback;
+    d->m_readCallback = callback;
 }
 
 } // namespace BluezQt

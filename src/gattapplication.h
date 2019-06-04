@@ -24,8 +24,6 @@
 
 #include "objectmanager.h"
 
-class QDBusObjectPath;
-
 namespace BluezQt
 {
 
@@ -53,11 +51,22 @@ public:
      */
     ~GattApplication();
 
+protected:
+    /**
+     * D-Bus object path of the GATT application.
+     *
+     * The path where the GATT application will be registered.
+     *
+     * @note You must provide valid object path!
+     *
+     * @return object path of GATT application
+     */
+    virtual QDBusObjectPath objectPath() const;
+
 private:
     DBusManagerStruct getManagedObjects() const override;
-    QDBusObjectPath objectPath() const;
 
-    QDBusObjectPath m_objectPath;
+    class GattApplicationPrivate *const d;
 
     friend class GattManager;
     friend class GattService;

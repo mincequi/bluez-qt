@@ -42,7 +42,7 @@ QString GattCharacteristicAdaptor::uuid() const
 
 QDBusObjectPath GattCharacteristicAdaptor::service() const
 {
-    return m_gattCharacteristic->serviceObjectPath();
+    return m_gattCharacteristic->service()->objectPath();
 }
 
 QStringList GattCharacteristicAdaptor::flags() const
