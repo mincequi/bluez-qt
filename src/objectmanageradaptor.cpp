@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,20 +21,24 @@
  */
 
 #include "objectmanageradaptor.h"
-#include "objectmanager.h"
+#include "gattapplication.h"
 
 namespace BluezQt
 {
 
-ObjectManagerAdaptor::ObjectManagerAdaptor(ObjectManager *parent)
+ObjectManagerAdaptor::ObjectManagerAdaptor(QObject *parent)
     : QDBusAbstractAdaptor(parent)
-    , m_objectManager(parent)
+    , m_gattApplication(qobject_cast<GattApplication*>(parent))
 {
 }
 
 DBusManagerStruct ObjectManagerAdaptor::GetManagedObjects()
 {
-    return m_objectManager->getManagedObjects();
+    if (m_gattApplication) {
+        return m_gattApplication->getManagedObjects();
+    }
+
+    return {};
 }
 
 } // namespace BluezQt

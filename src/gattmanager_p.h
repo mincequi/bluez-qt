@@ -1,5 +1,5 @@
 /*
- * BluezQt - Asynchronous Bluez wrapper library
+ * BluezQt - Asynchronous BlueZ wrapper library
  *
  * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
@@ -20,18 +20,21 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gattcharacteristic_p.h"
-#include "gattservice.h"
+#pragma once
+
+class QDBusInterface;
+class QString;
 
 namespace BluezQt
 {
 
-GattCharacterisiticPrivate::GattCharacterisiticPrivate(const QString &uuid, const GattService *service)
-    : m_uuid(uuid)
-    , m_service(service)
+class GattManagerPrivate
 {
-    static uint8_t charcNumber = 0;
-    m_objectPath.setPath(m_service->objectPath().path() + QStringLiteral("/char") + QString::number(charcNumber++));
-}
+public:
+    GattManagerPrivate(const QString &path);
+    ~GattManagerPrivate();
+
+    QDBusInterface *m_dbusInterface = nullptr;
+};
 
 } // namespace BluezQt

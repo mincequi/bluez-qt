@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous BlueZ wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,8 @@
 
 #pragma once
 
-#include "objectmanager.h"
+#include "bluezqt_dbustypes.h"
+#include "bluezqt_export.h"
 
 namespace BluezQt
 {
@@ -32,26 +33,46 @@ namespace BluezQt
  *
  * Bluetooth GattApplication.
  *
- * This class represents a Bluetooth GattApplication.
+ * This class represents a Bluetooth GattApplication, which is the root node of
+ * a GATT object hierarchy. Its child nodes can be GattServices,
+ * GattCharacteristics and GattDescriptors that belong to that GattApplication.
+ * The object path prefix for GattApplications is freely definable and its
+ * children's paths follow the application path hierarchy automatically, while
+ * all instances are enumerated automatically as well.
+ *
+ * Object path: [variable prefix]/appXX/serviceYY/charZZ
+ *
  */
-class BLUEZQT_EXPORT GattApplication : public ObjectManager
+class BLUEZQT_EXPORT GattApplication : public QObject
 {
     Q_OBJECT
 
 public:
     /**
-     * Creates a new GattApplication object.
+     * Creates a new GattApplication object with default object path prefix.
+     *
+     * Object path: /org/kde/bluezqt/appXX/serviceYY/charZZ
      *
      * @param parent
      */
     explicit GattApplication(QObject *parent = nullptr);
 
     /**
+     * Creates a new GattApplication object with custom object path prefix.
+     *
+     * Object path: [objectPathPrefix]/appXX/serviceYY/charZZ
+     *
+     * @param objectPathPrefix
+     * @param parent
+     */
+    explicit GattApplication(const QString &objectPathPrefix, QObject *parent = nullptr);
+
+    /**
      * Destroys a GattApplication object.
      */
     ~GattApplication();
 
-protected:
+private:
     /**
      * D-Bus object path of the GATT application.
      *
@@ -63,13 +84,22 @@ protected:
      */
     virtual QDBusObjectPath objectPath() const;
 
-    DBusManagerStruct getManagedObjects() const override;
+    /**
+     * Gets all GattServices, GattCharacteristics and GattDescriptors that
+     * belong to this GattApplication.
+     *
+     * The return value of this method is a dict whose keys are object paths.
+     * Each value is a dict whose keys are interfaces names. Each value in this
+     * inner dict is another dict with property names (as key) and property
+     * values (as value).
+     */
+    DBusManagerStruct getManagedObjects() const;
 
-private:
     class GattApplicationPrivate *const d;
 
     friend class GattManager;
     friend class GattService;
+    friend class ObjectManagerAdaptor;
 };
 
 } // namespace BluezQt

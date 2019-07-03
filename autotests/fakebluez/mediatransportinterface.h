@@ -1,6 +1,4 @@
 /*
- * BluezQt - Asynchronous BlueZ wrapper library
- *
  * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,17 +20,37 @@
 
 #pragma once
 
-#include <QDBusObjectPath>
+#include "object.h"
 
-namespace BluezQt
-{
+#include <QDBusAbstractAdaptor>
 
-class GattApplicationPrivate
+class QDBusMessage;
+
+class MediaTransportObject : public QObject
 {
 public:
-    GattApplicationPrivate(const QString &objectPathPrefix);
-
-    QDBusObjectPath m_objectPath;
+    explicit MediaTransportObject(const QDBusObjectPath &path, QObject *parent = nullptr);
 };
 
-} // namespace BluezQt
+class MediaTransportInterface : public QDBusAbstractAdaptor, public Object
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.bluez.MediaTransport1")
+    Q_PROPERTY(quint8 Codec READ codec)
+    Q_PROPERTY(QByteArray Configuration READ configuration)
+    Q_PROPERTY(QString State READ state)
+    Q_PROPERTY(quint16 Volume READ volume)
+
+public:
+    explicit MediaTransportInterface(const QDBusObjectPath &path, const QVariantMap &properties, QObject *parent = nullptr);
+
+    quint8 codec() const;
+    QByteArray configuration() const;
+    QString state() const;
+    quint16 volume() const;
+
+public Q_SLOTS:
+    void Acquire(const QDBusMessage &msg);
+    void TryAcquire(const QDBusMessage &msg);
+    void Release();
+};

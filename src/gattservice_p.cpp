@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,8 @@ namespace BluezQt
 {
 
 GattServicePrivate::GattServicePrivate(const QString &uuid, bool isPrimary, const QString &appPath)
-    : m_uuid(uuid),
-      m_isPrimary(isPrimary)
+    : m_uuid(uuid)
+    , m_isPrimary(isPrimary)
 {
     static uint8_t serviceNumber = 0;
     m_objectPath.setPath(appPath + QStringLiteral("/service") + QString::number(serviceNumber++));

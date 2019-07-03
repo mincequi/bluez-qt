@@ -24,15 +24,6 @@
 #include "gattcharacteristic.h"
 #include "adapter.h"
 
-class TestApplication : public BluezQt::GattApplication
-{
-public:
-    using BluezQt::GattApplication::GattApplication;
-    DBusManagerStruct getManagedObjects() const override;
-
-    mutable bool m_getObjectsCalled = false;
-};
-
 class GattManagerTest : public QObject
 {
     Q_OBJECT
@@ -41,12 +32,11 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
-    void getObjectsTest();
     void readCharcTest();
     void writeCharcTest();
 
 private:
-    TestApplication             *m_application;
+    BluezQt::GattApplication *m_application;
     BluezQt::GattCharacteristic *m_characteristic;
     BluezQt::AdapterPtr m_adapter;
 };

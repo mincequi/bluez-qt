@@ -45,7 +45,7 @@ LeServer::LeServer(Manager *manager, QObject *parent)
     auto call = m_manager->usableAdapter()->leAdvertisingManager()->registerAdvertisement(advertisement);
     connect(call, &PendingCall::finished, this, &LeServer::onCallFinished);
 
-    auto application = new GattApplication(this);
+    auto application = new GattApplication(QStringLiteral("/org/kde/bluezqt"), this);
     auto service = new GattService(QStringLiteral("ad100000-d901-11e8-9f8b-f2801f1b9fd1"), true, application);
     new GattCharacteristic(QStringLiteral("ad10e100-d901-11e8-9f8b-f2801f1b9fd1"), service);
     auto call2 = m_manager->usableAdapter()->gattManager()->registerApplication(application);

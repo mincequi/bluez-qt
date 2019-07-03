@@ -12,6 +12,7 @@ set(bluezqt_SRCS
     gattcharacteristic_p.cpp
     gattcharacteristicadaptor.cpp
     gattmanager.cpp
+    gattmanager_p.cpp
     gattservice.cpp
     gattservice_p.cpp
     gattserviceadaptor.cpp
@@ -27,7 +28,8 @@ set(bluezqt_SRCS
     mediaplayer.cpp
     mediaplayer_p.cpp
     mediaplayertrack.cpp
-    objectmanager.cpp
+    mediatransport.cpp
+    mediatransport_p.cpp
     objectmanageradaptor.cpp
     devicesmodel.cpp
     job.cpp

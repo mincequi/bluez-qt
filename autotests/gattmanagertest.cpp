@@ -37,12 +37,6 @@ extern void bluezqt_initFakeBluezTestRun();
 
 using namespace BluezQt;
 
-DBusManagerStruct TestApplication::getManagedObjects() const
-{
-    m_getObjectsCalled = true;
-    return GattApplication::getManagedObjects();
-}
-
 void GattManagerTest::initTestCase()
 {
     bluezqt_initFakeBluezTestRun();
@@ -66,26 +60,22 @@ void GattManagerTest::initTestCase()
     m_adapter = manager->adapters().at(0);
     QVERIFY(m_adapter->gattManager());
 
-    m_application = new TestApplication(this);
+    m_application = new GattApplication(QStringLiteral("/org/kde/bluezqt"), this);
     auto service = new GattService(QStringLiteral("ad100000-d901-11e8-9f8b-f2801f1b9fd1"), true, m_application);
     m_characteristic = new GattCharacteristic(QStringLiteral("ad10e100-d901-11e8-9f8b-f2801f1b9fd1"), service);
     m_adapter->gattManager()->registerApplication(m_application)->waitForFinished();
+
+    // Let FakeBluez read local characteristic
+    QVariantMap params;
+    params.insert(QStringLiteral("AdapterPath"), QVariant::fromValue(QDBusObjectPath(m_adapter->ubi())));
+    FakeBluez::runAction(QStringLiteral("devicemanager"), QStringLiteral("adapter-gattmanager:get-objects"), params);
+    // Process events to let getManagedObjects call from FakeBluez be finished
+    QTest::qWait(0);
 }
 
 void GattManagerTest::cleanupTestCase()
 {
     FakeBluez::stop();
-}
-
-void GattManagerTest::getObjectsTest()
-{
-    QCOMPARE(m_application->m_getObjectsCalled, false);
-
-    QVariantMap params;
-    params.insert(QStringLiteral("AdapterPath"), QVariant::fromValue(QDBusObjectPath(m_adapter->ubi())));
-    FakeBluez::runAction(QStringLiteral("devicemanager"), QStringLiteral("adapter-gattmanager:get-objects"), params);
-
-    QTRY_COMPARE(m_application->m_getObjectsCalled, true);
 }
 
 void GattManagerTest::readCharcTest()

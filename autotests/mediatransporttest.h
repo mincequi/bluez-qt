@@ -1,6 +1,4 @@
 /*
- * BluezQt - Asynchronous Bluez wrapper library
- *
  * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,18 +18,46 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gattcharacteristic_p.h"
-#include "gattservice.h"
+#pragma once
 
-namespace BluezQt
+#include <QObject>
+#include <QList>
+
+#include "bluezdevice1_tst.h"
+#include "bluezmediatransport1_tst.h"
+#include "dbusproperties_tst.h"
+
+#include "manager.h"
+#include "device.h"
+#include "mediatransport.h"
+
+class MediaTransportTest : public QObject
 {
+    Q_OBJECT
 
-GattCharacterisiticPrivate::GattCharacterisiticPrivate(const QString &uuid, const GattService *service)
-    : m_uuid(uuid)
-    , m_service(service)
-{
-    static uint8_t charcNumber = 0;
-    m_objectPath.setPath(m_service->objectPath().path() + QStringLiteral("/char") + QString::number(charcNumber++));
-}
+public:
+    explicit MediaTransportTest();
 
-} // namespace BluezQt
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+
+    void connectTest();
+    void disconnectTest();
+    void connectProfileTest();
+
+    void getPropertiesTest();
+
+    void disconnectProfileTest();
+
+private:
+    struct MediaTransportUnit
+    {
+        BluezQt::DevicePtr device;
+        org::bluez::MediaTransport1 *dbusMediaTransport;
+        org::freedesktop::DBus::Properties *dbusProperties;
+    };
+
+    BluezQt::Manager *m_manager;
+    QList<MediaTransportUnit> m_units;
+};

@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,9 +35,14 @@
 namespace BluezQt
 {
 
-GattApplication::GattApplication(QObject *parent) :
-    ObjectManager(parent),
-    d(new GattApplicationPrivate())
+GattApplication::GattApplication(QObject *parent)
+    : GattApplication(QStringLiteral("/org/kde/bluezqt"), parent)
+{
+}
+
+GattApplication::GattApplication(const QString &objectPathPrefix, QObject *parent)
+    : QObject(parent)
+    , d(new GattApplicationPrivate(objectPathPrefix))
 {
 }
 
@@ -50,8 +55,8 @@ DBusManagerStruct GattApplication::getManagedObjects() const
 {
     DBusManagerStruct objects;
 
-    auto serviceAdaptors = findChildren<GattServiceAdaptor*>();
-    auto charcAdaptors = findChildren<GattCharacteristicAdaptor*>();
+    const auto serviceAdaptors = findChildren<GattServiceAdaptor*>();
+    const auto charcAdaptors = findChildren<GattCharacteristicAdaptor*>();
 
     for (const GattServiceAdaptor *serviceAdaptor : serviceAdaptors) {
         QVariantMap properties;
@@ -61,7 +66,7 @@ DBusManagerStruct GattApplication::getManagedObjects() const
             properties.insert(QString::fromLatin1(propertyName), serviceAdaptor->property(propertyName));
         }
 
-        GattService* service = qobject_cast<GattService*>(serviceAdaptor->parent());
+        GattService *service = qobject_cast<GattService*>(serviceAdaptor->parent());
         if (service) {
             objects[service->objectPath()].insert(QStringLiteral("org.bluez.GattService1"), properties);
         }

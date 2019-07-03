@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(KF5_VERSION "5.59.0") # handled by release scripts
+set(KF5_VERSION "5.60.0") # handled by release scripts
 project(BluezQt VERSION ${KF5_VERSION})
 
 include(FeatureSummary)
-find_package(ECM 5.28.0 NO_MODULE)
+find_package(ECM 5.59.0 NO_MODULE)
 set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://projects.kde.org/projects/kdesupport/extra-cmake-modules")
 feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
@@ -20,7 +20,6 @@ include(KDEInstallDirs)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
 include(ECMQtDeclareLoggingCategory)
-
 
 option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
 add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
@@ -106,6 +105,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     endif()
 endif()
 
-install(FILES bluez.categories DESTINATION ${KDE_INSTALL_CONFDIR})
+install(FILES bluez.categories  DESTINATION  ${KDE_INSTALL_LOGGINGCATEGORIESDIR})
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

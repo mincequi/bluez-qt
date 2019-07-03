@@ -20,57 +20,51 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gattcharacteristic.h"
-#include "gattcharacteristic_p.h"
-#include "gattservice.h"
+#include "mediatransport.h"
+#include "mediatransport_p.h"
 
 namespace BluezQt
 {
 
-GattCharacteristic::GattCharacteristic(const QString &uuid, GattService *service)
-    : QObject(service)
-    , d(new GattCharacterisiticPrivate(uuid, service))
+MediaTransport::MediaTransport(const QString &path, const QVariantMap &properties)
+    : QObject()
+    , d(new MediaTransportPrivate(path, properties))
 {
 }
 
-GattCharacteristic::~GattCharacteristic()
+MediaTransport::~MediaTransport()
 {
     delete d;
 }
 
-QByteArray GattCharacteristic::readValue()
+AudioConfiguration MediaTransport::audioConfiguration() const
 {
-    if (d->m_readCallback) {
-        d->m_value = d->m_readCallback();
-    }
-
-    return d->m_value;
+    return d->m_configuration;
 }
 
-void GattCharacteristic::writeValue(const QByteArray &value)
+MediaTransport::State MediaTransport::state() const
 {
-    d->m_value = value;
-    emit valueWritten(d->m_value);
+    return d->m_state;
 }
 
-QString GattCharacteristic::uuid() const
+quint16 MediaTransport::volume() const
 {
-    return d->m_uuid;
+    return d->m_volume;
 }
 
-const GattService *GattCharacteristic::service() const
+TPendingCall<QDBusUnixFileDescriptor, uint16_t, uint16_t> *MediaTransport::acquire()
 {
-    return d->m_service;
+    return new TPendingCall<QDBusUnixFileDescriptor, uint16_t, uint16_t>(d->m_dbusInterface->asyncCall(QStringLiteral("Acquire")), this);
 }
 
-QDBusObjectPath GattCharacteristic::objectPath() const
+TPendingCall<QDBusUnixFileDescriptor, uint16_t, uint16_t> *MediaTransport::tryAcquire()
 {
-    return d->m_objectPath;
+    return new TPendingCall<QDBusUnixFileDescriptor, uint16_t, uint16_t>(d->m_dbusInterface->asyncCall(QStringLiteral("TryAcquire")), this);
 }
 
-void GattCharacteristic::setReadCallback(ReadCallback callback)
+TPendingCall<void> *MediaTransport::release()
 {
-    d->m_readCallback = callback;
+    return new TPendingCall<void>(d->m_dbusInterface->asyncCall(QStringLiteral("Release")), this);
 }
 
 } // namespace BluezQt

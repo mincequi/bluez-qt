@@ -37,7 +37,7 @@ GattManagerInterface::GattManagerInterface(const QDBusObjectPath &path, QObject 
 void GattManagerInterface::runAction(const QString &actionName, const QVariantMap &properties)
 {
     if (actionName == QLatin1String("get-objects")) {
-        runGetObjectsAction(properties);
+        runGetObjectsAction();
     } else if (actionName == QLatin1String("read-charc")) {
         runReadCharcAction(properties);
     } else if (actionName == QLatin1String("write-charc")) {
@@ -59,7 +59,7 @@ void GattManagerInterface::UnregisterApplication(const QDBusObjectPath &path, co
     }
 }
 
-void GattManagerInterface::runGetObjectsAction(const QVariantMap &properties)
+void GattManagerInterface::runGetObjectsAction()
 {
     QDBusMessage call = QDBusMessage::createMethodCall(m_service,
                                                        m_application.path(),

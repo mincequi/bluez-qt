@@ -55,7 +55,7 @@ public Q_SLOTS:
     void StopNotify();
 
 private:
-    GattCharacteristic* m_gattCharacteristic;
+    GattCharacteristic *m_gattCharacteristic;
 };
 
 } // namespace BluezQt

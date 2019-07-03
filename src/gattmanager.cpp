@@ -25,6 +25,7 @@
 #include "gattapplication.h"
 #include "gattcharacteristic.h"
 #include "gattcharacteristicadaptor.h"
+#include "gattmanager_p.h"
 #include "gattservice.h"
 #include "gattserviceadaptor.h"
 #include "objectmanageradaptor.h"
@@ -40,38 +41,26 @@ namespace BluezQt
 
 GattManager::GattManager(const QString &path, QObject *parent)
     : QObject(parent)
+    , d(new GattManagerPrivate(path))
 {
-    m_dbusInterface = new QDBusInterface(Strings::orgBluez(),
-                                         path,
-                                         QStringLiteral("org.bluez.GattManager1"),
-                                         DBusConnection::orgBluez(),
-                                         this);
 }
 
 GattManager::~GattManager()
 {
+    delete d;
 }
 
 PendingCall *GattManager::registerApplication(GattApplication *application)
 {
     Q_ASSERT(application);
 
-    // Register services
-    for (auto child : application->children()) {
-        GattService* service = qobject_cast<GattService*>(child);
-        if (!service) {
-            continue;
-        }
+    const auto services = application->findChildren<GattService*>();
+    for (auto service : services) {
         new GattServiceAdaptor(service);
 
-        // Register characteristics
-        for (auto serviceChild : service->children()) {
-            GattCharacteristic* charc = qobject_cast<GattCharacteristic*>(serviceChild);
-            if (!charc) {
-                continue;
-            }
+        const auto charcs = service->findChildren<GattCharacteristic*>();
+        for (auto charc : charcs) {
             new GattCharacteristicAdaptor(charc);
-            // TODO: add descriptors
             if (!DBusConnection::orgBluez().registerObject(charc->objectPath().path(),
                                                            charc,
                                                            QDBusConnection::ExportAdaptors)) {
@@ -87,6 +76,7 @@ PendingCall *GattManager::registerApplication(GattApplication *application)
     }
 
     new ObjectManagerAdaptor(application);
+
     if (!DBusConnection::orgBluez().registerObject(application->objectPath().path(),
                                                    application,
                                                    QDBusConnection::ExportAdaptors)) {
@@ -95,7 +85,7 @@ PendingCall *GattManager::registerApplication(GattApplication *application)
 
     QList<QVariant> argumentList;
     argumentList << QVariant::fromValue(application->objectPath()) << QVariantMap();
-    return new PendingCall(m_dbusInterface->asyncCallWithArgumentList(QStringLiteral("RegisterApplication"), argumentList),
+    return new PendingCall(d->m_dbusInterface->asyncCallWithArgumentList(QStringLiteral("RegisterApplication"), argumentList),
                            PendingCall::ReturnVoid, this);
 }
 
@@ -107,7 +97,7 @@ PendingCall *GattManager::unregisterApplication(GattApplication *application)
 
     QList<QVariant> argumentList;
     argumentList << QVariant::fromValue(application->objectPath());
-    return new PendingCall(m_dbusInterface->asyncCallWithArgumentList(QStringLiteral("UnregisterApplication"), argumentList),
+    return new PendingCall(d->m_dbusInterface->asyncCallWithArgumentList(QStringLiteral("UnregisterApplication"), argumentList),
                            PendingCall::ReturnVoid, this);
 }
 

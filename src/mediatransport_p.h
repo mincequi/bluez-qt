@@ -20,18 +20,37 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gattcharacteristic_p.h"
-#include "gattservice.h"
+#pragma once
+
+#include "mediatransport.h"
+#include "dbusproperties.h"
 
 namespace BluezQt
 {
 
-GattCharacterisiticPrivate::GattCharacterisiticPrivate(const QString &uuid, const GattService *service)
-    : m_uuid(uuid)
-    , m_service(service)
+typedef org::freedesktop::DBus::Properties DBusProperties;
+
+class MediaTransportPrivate : public QObject
 {
-    static uint8_t charcNumber = 0;
-    m_objectPath.setPath(m_service->objectPath().path() + QStringLiteral("/char") + QString::number(charcNumber++));
-}
+    Q_OBJECT
+
+public:
+    explicit MediaTransportPrivate(const QString &path, const QVariantMap &properties);
+
+    void init(const QVariantMap &properties);
+
+public Q_SLOTS:
+    void onPropertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated);
+
+public:
+    QWeakPointer<MediaTransport> q;
+    QDBusInterface *m_dbusInterface;
+    DBusProperties *m_dbusProperties;
+
+    QString m_path;
+    AudioConfiguration m_configuration;
+    MediaTransport::State m_state = MediaTransport::State::Idle;
+    quint16 m_volume = 0;
+};
 
 } // namespace BluezQt

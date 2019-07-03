@@ -55,10 +55,12 @@ QByteArray GattCharacteristicAdaptor::ReadValue(const QVariantMap &/*options*/)
 {
     return m_gattCharacteristic->readValue();
 }
+
 void GattCharacteristicAdaptor::WriteValue(const QByteArray &value, const QVariantMap &/*options*/)
 {
     m_gattCharacteristic->writeValue(value);
 }
+
 void GattCharacteristicAdaptor::StartNotify()
 {
     // TODO: implement

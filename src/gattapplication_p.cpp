@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,10 @@
 namespace BluezQt
 {
 
-GattApplicationPrivate::GattApplicationPrivate()
+GattApplicationPrivate::GattApplicationPrivate(const QString &objectPathPrefix)
 {
     static uint8_t appNumber = 0;
-    m_objectPath.setPath(QStringLiteral("/org/bluez/app") + QString::number(appNumber++));
+    m_objectPath.setPath(objectPathPrefix + QStringLiteral("/app") + QString::number(appNumber++));
 }
 
 } // namespace BluezQt

@@ -20,18 +20,25 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gattcharacteristic_p.h"
-#include "gattservice.h"
+#include "gattmanager_p.h"
+#include "utils.h"
+
+#include <QDBusInterface>
 
 namespace BluezQt
 {
 
-GattCharacterisiticPrivate::GattCharacterisiticPrivate(const QString &uuid, const GattService *service)
-    : m_uuid(uuid)
-    , m_service(service)
+GattManagerPrivate::GattManagerPrivate(const QString &path)
 {
-    static uint8_t charcNumber = 0;
-    m_objectPath.setPath(m_service->objectPath().path() + QStringLiteral("/char") + QString::number(charcNumber++));
+    m_dbusInterface = new QDBusInterface(Strings::orgBluez(),
+                                         path,
+                                         QStringLiteral("org.bluez.GattManager1"),
+                                         DBusConnection::orgBluez());
+}
+
+GattManagerPrivate::~GattManagerPrivate()
+{
+    delete m_dbusInterface;
 }
 
 } // namespace BluezQt

@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous BlueZ wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,7 @@ public:
     QString m_uuid;
     const GattService *m_service;
     QDBusObjectPath m_objectPath;
-    QByteArray      m_value;
+    QByteArray m_value;
     GattCharacteristic::ReadCallback m_readCallback = nullptr;
 };
 

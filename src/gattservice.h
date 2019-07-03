@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous BlueZ wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,7 @@ public:
      *
      * @param parent
      */
-    GattService(const QString &uuid, bool isPrimary, GattApplication *parent);
+    explicit GattService(const QString &uuid, bool isPrimary, GattApplication *parent);
 
     /**
      * Destroys a GattService object.

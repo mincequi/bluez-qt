@@ -1,7 +1,7 @@
 /*
  * BluezQt - Asynchronous Bluez wrapper library
  *
- * Copyright (C) 2018 Manuel Weichselbaumer <mincequi@web.de>
+ * Copyright (C) 2019 Manuel Weichselbaumer <mincequi@web.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,10 @@
 #include <QDBusAbstractAdaptor>
 
 #include "bluezqt_dbustypes.h"
-#include "objectmanager.h"
 
 namespace BluezQt
 {
+class GattApplication;
 
 class ObjectManagerAdaptor : public QDBusAbstractAdaptor
 {
@@ -36,7 +36,7 @@ class ObjectManagerAdaptor : public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.DBus.ObjectManager")
 
 public:
-    explicit ObjectManagerAdaptor(ObjectManager *parent);
+    explicit ObjectManagerAdaptor(QObject *parent);
 
 public Q_SLOTS:
     DBusManagerStruct GetManagedObjects();
@@ -46,7 +46,7 @@ Q_SIGNALS:
     void InterfacesRemoved(const QDBusObjectPath &object, const QStringList &interfaces);
 
 private:
-    ObjectManager *m_objectManager;
+    GattApplication *m_gattApplication = nullptr;
 };
 
 } // namespace BluezQt
