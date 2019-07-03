@@ -4,7 +4,7 @@ set(KF5_VERSION "5.60.0") # handled by release scripts
 project(BluezQt VERSION ${KF5_VERSION})
 
 include(FeatureSummary)
-find_package(ECM 5.59.0 NO_MODULE)
+find_package(ECM 5.28.0 NO_MODULE)
 set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://projects.kde.org/projects/kdesupport/extra-cmake-modules")
 feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
@@ -50,12 +50,12 @@ add_definitions(-DQT_NO_FOREACH)
 add_subdirectory(src)
 add_subdirectory(tools/bluezapi2qt)
 
-if (BUILD_TESTING)
-    add_subdirectory(tests)
-    if(Qt5Test_FOUND)
-        add_subdirectory(autotests)
-    endif()
-endif()
+#if (BUILD_TESTING)
+#    add_subdirectory(tests)
+#    if(Qt5Test_FOUND)
+#        add_subdirectory(autotests)
+#    endif()
+#endif()
 
 #if(Qt5Qml_FOUND)
 #    add_subdirectory(src/imports)

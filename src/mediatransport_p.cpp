@@ -87,6 +87,8 @@ static AudioSampleRate byteArrayToSampleRate(AudioCodec codec, const QByteArray 
         }
         break;
     }
+    case AudioCodec::Invalid:
+        break;
     }
 
     return AudioSampleRate::Invalid;

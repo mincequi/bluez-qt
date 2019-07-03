@@ -60,11 +60,11 @@ quint16 MediaTransportInterface::volume() const
     return Object::property(QStringLiteral("Volume")).toUInt();
 }
 
-void MediaTransportInterface::Acquire(const QDBusMessage &msg)
+void MediaTransportInterface::Acquire(const QDBusMessage &/*msg*/)
 {
 }
 
-void MediaTransportInterface::TryAcquire(const QDBusMessage &msg)
+void MediaTransportInterface::TryAcquire(const QDBusMessage &/*msg*/)
 {
 }
 
